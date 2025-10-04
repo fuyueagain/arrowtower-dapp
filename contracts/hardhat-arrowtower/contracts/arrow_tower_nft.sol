@@ -38,7 +38,7 @@ library Counters {
 
 /**
  * @title ArrowTowerVillageNFT
- * @dev 箭扣长城村旅游纪念 NFT 合约
+ * @dev 箭塔村旅游纪念 NFT 合约
  * @notice 只有授权的 Minter 合约可以调用铸造函数
  * 
  * 功能说明：
