@@ -1,62 +1,99 @@
 // app/api/auth/[...nextauth]/route.ts
 
 import NextAuth from "next-auth";
+import type { JWT as NextAuthJWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { verifyMessage } from "viem";
+import { PrismaClient } from "@prisma/client";
+import { createHash } from "crypto";
 
 // ----------------------------------------------------
-// 1. 定义用户认证结果类型，修复TS2339
+// Prisma 客户端（HMR 兼容）
 // ----------------------------------------------------
-type UserData = {
-  success: true;
-  id: string;
-  name: string;
-  role: "admin" | "user";
-};
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const prisma = globalForPrisma.prisma || new PrismaClient();
 
-type UserNotFound = {
-  success: false;
-};
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
+
+// ----------------------------------------------------
+// 类型定义
+// ----------------------------------------------------
 type Role = "admin" | "user";
-
-type UserAuthResult = UserData | UserNotFound;
-
-// **模拟** checkWalletAuth 函数
-// 实际应用中你需要实现一个真正的数据库查询函数
-const MOCK_USERS: Record<string, UserAuthResult> = {
-  // 模拟一个管理员地址
-  "0x1AdminAddressExample": {
-    success: true,
-    id: "admin_user_id",
-    name: "Admin User",
-    role: "admin",
-  },
-  // 模拟一个普通用户地址
-  "0x2UserAddressExample": {
-    success: true,
-    id: "user_id",
-    name: "Regular User",
-    role: "user",
-  },
-  // 模拟一个未找到的用户
-  "0x3NotFoundAddressExample": { success: false },
+// ✅ 添加这个局部类型定义
+type User = {
+  id: string;
+  name?: string | null;
+  address: string;
+  status: string;
+  role: Role;
 };
 
-const mockCheckWalletAuth = (address: string): UserAuthResult => {
-  const normalizedAddress = address.toLowerCase().slice(0, 10);
 
-  if (normalizedAddress.includes("1admin")) {
-    return MOCK_USERS["0x1AdminAddressExample"];
+// 生成唯一 ID（用于自动注册）
+function generateId(data: string): string {
+  return createHash("sha256")
+    .update(data)
+    .digest("hex")
+    .substring(0, 32);
+}
+
+// ----------------------------------------------------
+// 检查用户是否存在或自动注册
+// ----------------------------------------------------
+async function getUserOrRegister(address: string): Promise<User | null> {
+  const lowerCaseAddress = address.toLowerCase();
+
+  try {
+    // 先查询
+    let user = await prisma.user.findUnique({
+      where: { walletAddress: lowerCaseAddress },
+      select: { id: true, nickname: true, role: true },
+    });
+
+    if (user) {
+      return {
+        id: user.id,
+        name: user.nickname,
+        address: lowerCaseAddress,
+        status: "approved",
+        role: user.role as Role,
+      };
+    }
+
+    // 用户不存在 → 自动注册
+    const id = generateId(address);
+    const nickname = `User_${address.slice(-6)}`;
+
+    const newUser = await prisma.user.create({
+      data: {
+        id,
+        walletAddress: lowerCaseAddress,
+        walletType: "evm",
+        nickname,
+        avatar: "/default-avatar.png",
+        totalRoutes: 0,
+      },
+      select: { id: true, nickname: true, role: true },
+    });
+
+    console.log("✅ 自动注册用户:", address);
+
+    return {
+      id: newUser.id,
+      name: newUser.nickname,
+      address: lowerCaseAddress,
+      status: "approved",
+      role: newUser.role as Role,
+    };
+  } catch (error: any) {
+    console.error("数据库操作失败:", error);
+    return null;
   }
-  if (normalizedAddress.includes("2user")) {
-    return MOCK_USERS["0x2UserAddressExample"];
-  }
+}
 
-  return MOCK_USERS["0x3NotFoundAddressExample"];
-};
-
-const handler = NextAuth({
+// 👇 将 NextAuth 配置提取为可导出的 authOptions
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Ethereum Wallet",
@@ -67,74 +104,97 @@ const handler = NextAuth({
       async authorize(credentials) {
         try {
           if (!credentials?.address || !credentials?.signature) {
+            console.warn("[AUTH] 缺少地址或签名");
             return null;
           }
 
-          const authResult = mockCheckWalletAuth(credentials.address);
-
-          // ----------------------------------------------------
-          // 2. 修复TS2339：通过检查 success 属性来收窄类型
-          // ----------------------------------------------------
-          if (!authResult.success) {
-            return null; // 用户未找到或注册失败
-          }
-
-          // 此时 authResult 的类型已收窄为 UserData
-          const user = authResult; 
-
-          // 签名验证
           const message = "login arrowtower";
-          const isValidSignature = verifyMessage({
-            address: credentials.address as `0x${string}`,
-            message,
-            signature: credentials.signature as `0x${string}`,
-          });
+          const address = credentials.address as `0x${string}`;
+          const signature = credentials.signature as `0x${string}`;
 
+          // ✅ 验证签名
+          const isValidSignature = await verifyMessage({ address, message, signature });
           if (!isValidSignature) {
+            console.warn("[AUTH] 签名无效:", address);
             return null;
           }
 
-          // 成功认证，返回包含简化信息的 User 对象
-          return {
-            id: user.id, // TS 修复：user 确定有 id
-            name: user.name, // TS 修复：user 确定有 name
-            address: credentials.address,
-            status: "approved",
-            role: user.role, // TS 修复：user 确定有 role
-          };
+          // ✅ 获取用户（不存在则自动注册）
+          const user = await getUserOrRegister(address);
+          if (!user) {
+            console.error("[AUTH] 获取/注册用户失败:", address);
+            return null;
+          }
+
+          console.log("[AUTH] 认证成功:", user.name);
+          return user;
         } catch (error) {
-          console.error("Authentication error:", error);
+          console.error("[AUTH] 认证过程出错:", error);
           return null;
         }
       },
     }),
   ],
+
+  // ----------------------------------------------------
+  // JWT 回调：将用户信息写入 token
+  // ----------------------------------------------------
   callbacks: {
-    jwt: async ({ token, user }) => {
-      // 这里的类型问题需要通过 next-auth.d.ts 扩展模块解决
-      if (user && "address" in user && "status" in user) {
-        token.id = user.id as string;
-        token.name = user.name as string;
-        token.address = user.address as string;
-        token.status = user.status as string;
-        token.role = user.role as Role;
+    async jwt({ token, user }: { 
+      token: NextAuthJWT & User;  // ✅ 使用重命名后的 JWT 类型
+      user?: User;
+    }) {
+      if (user) {
+        token.id = user.id;
+        token.name = user.name ?? `User_${user.address.slice(-6)}`;
+        token.address = user.address;
+        token.status = user.status;
+        token.role = user.role;
       }
       return token;
     },
-    session: async ({ session, token }) => {
-      // 这里的类型问题需要通过 next-auth.d.ts 扩展模块解决
+
+    async session({ 
+      session, 
+      token 
+    }: { 
+      session: { 
+        user: User & { 
+          id: string; 
+          address: string; 
+          status: string; 
+          role: "admin" | "user"; 
+        }; 
+        expires: string 
+      }; 
+      token: NextAuthJWT & User 
+    }) {
       if (session.user) {
-        const user = session.user as unknown as { id:string; name:string; address: string;role:string; status: string };
-        user.id = token.id as string;
-        user.name = token.name as string;
-        user.address = token.address as string;
-        user.status = token.status as string;
-        user.role = token.role as string;
+        session.user.id = token.id;
+        session.user.name = token.name ?? `User_${token.address.slice(-6)}`;
+        session.user.address = token.address;
+        session.user.status = token.status;
+        session.user.role = token.role;
       }
-      return session;
+
+      return session; // ✅ 自动包含 expires
     },
   },
+
+  // ----------------------------------------------------
+  // 其他配置
+  // ----------------------------------------------------
   secret: process.env.NEXTAUTH_SECRET,
-});
+  pages: {
+    signIn: "/auth/signin", // 可选：自定义登录页
+  },
+  session: {
+    strategy: "jwt" as const,
+    maxAge: 30 * 24 * 60 * 60, // 30 天
+  },
+};
+
+// 创建处理程序
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
