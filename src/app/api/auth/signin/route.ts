@@ -1,10 +1,20 @@
-// app/api/auth/signin/route.ts 或 route.ts (用于模拟)
-
+// app/api/auth/signin/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { verifyMessage } from "viem";
+import { PrismaClient } from "@prisma/client";
+import { createHash } from "crypto";
 
 // ----------------------------------------------------
-// 1. 定义用户认证结果类型
+// Prisma 客户端（HMR 兼容）
+// ----------------------------------------------------
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
+
+const prisma = globalForPrisma.prisma || new PrismaClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
+// ----------------------------------------------------
+// 类型定义
 // ----------------------------------------------------
 type UserData = {
   success: true;
@@ -19,63 +29,134 @@ type UserNotFound = {
 
 type UserAuthResult = UserData | UserNotFound;
 
-// **模拟** checkWalletAuth 函数
-const MOCK_USERS: Record<string, UserAuthResult> = {
-  "0x1AdminAddressExample": {
-    success: true,
-    id: "admin_user_id",
-    name: "Admin User",
-    role: "admin",
-  },
-  "0x2UserAddressExample": {
-    success: true,
-    id: "user_id",
-    name: "Regular User",
-    role: "user",
-  },
-  "0x3NotFoundAddressExample": { success: false },
-};
+// 生成唯一 ID
+function generateId(data: string): string {
+  return createHash("sha256")
+    .update(data)
+    .digest("hex")
+    .substring(0, 32);
+}
 
-const mockCheckWalletAuth = (address: string): UserAuthResult => {
-  const normalizedAddress = address.toLowerCase().slice(0, 10);
+// ----------------------------------------------------
+// 检查用户是否存在（使用 Prisma）
+// ----------------------------------------------------
+async function checkUserExists(address: string): Promise<UserAuthResult> {
+  try {
+    const normalizedAddress = address.toLowerCase().trim();
 
-  if (normalizedAddress.includes("1admin")) {
-    return MOCK_USERS["0x1AdminAddressExample"];
+    const user = await prisma.user.findUnique({
+      where: { walletAddress: normalizedAddress },
+      select: { id: true, nickname: true },
+    });
+
+    if (user) {
+      return {
+        success: true,
+        id: user.id,
+        name: user.nickname,
+        role: "user", // 可扩展为数据库字段
+      };
+    }
+
+    return { success: false };
+  } catch (error) {
+    console.error("Database query error in checkUserExists:", error);
+    return { success: false };
   }
-  if (normalizedAddress.includes("2user")) {
-    return MOCK_USERS["0x2UserAddressExample"];
+}
+
+// ----------------------------------------------------
+// 自动注册用户（直接使用 Prisma，避免调用 API）
+// ----------------------------------------------------
+async function autoRegisterUser(address: string): Promise<UserData | null> {
+  try {
+    const lowerCaseAddress = address.toLowerCase();
+    const id = generateId(address);
+    const nickname = `User_${address.slice(-6)}`;
+
+    const newUser = await prisma.user.create({
+      data: {
+        id,
+        walletAddress: lowerCaseAddress,
+        walletType: "evm",
+        nickname,
+        avatar: "/default-avatar.png",
+        totalRoutes: 0,
+      },
+    });
+
+    console.log("✅ 自动注册成功:", address);
+
+    return {
+      success: true,
+      id: newUser.id,
+      name: newUser.nickname,
+      role: "user",
+    };
+  } catch (error: any) {
+    // 唯一约束冲突可能发生在并发场景
+    if (error.code === "P2002" || error.name === "UniqueConstraintError") {
+      console.warn("User was registered by another request:", address);
+      // 再查一次
+      const existing = await prisma.user.findUnique({
+        where: { walletAddress: address.toLowerCase() },
+        select: { id: true, nickname: true },
+      });
+      if (existing) {
+        return {
+          success: true,
+          id: existing.id,
+          name: existing.nickname,
+          role: "user",
+        };
+      }
+    }
+    console.error("Auto-register failed:", error);
+    return null;
   }
+}
 
-  return MOCK_USERS["0x3NotFoundAddressExample"];
-};
-
+// ----------------------------------------------------
+// POST 处理函数
+// ----------------------------------------------------
 export async function POST(req: NextRequest) {
   try {
     let requestBody: any;
     try {
       requestBody = await req.json();
     } catch (e) {
-      // JSON 解析失败时，将 requestBody 设为 {}
-      requestBody = {};
-    }
-    
-    // **修复点：解构时使用安全变量**
-    const { address, signature } = requestBody;
-
-    if (!address || !signature) {
       return NextResponse.json(
-        { status: "error", message: "Missing credentials or invalid request body format" },
+        { status: "error", message: "Invalid JSON" },
         { status: 400 }
       );
     }
 
-    // 签名验证
+    const { address, signature } = requestBody;
+
+    if (!address || !signature) {
+      return NextResponse.json(
+        { status: "error", message: "Missing address or signature" },
+        { status: 400 }
+      );
+    }
+
+    // ✅ 1. 验证签名
     const message = "login arrowtower";
-    const isValidSignature = await verifyMessage({
-      address: address as `0x${string}`,
-      message,
-      signature: signature as `0x${string}`,
-    });
+    let isValidSignature = false;
+
+    try {
+      isValidSignature = await verifyMessage({
+        address: address as `0x${string}`,
+        message,
+        signature: signature as `0x${string}`,
+      });
+    } catch (e) {
+      console.error("Signature verification failed:", e);
+      return NextResponse.json(
+        { status: "error", message: "Invalid signature format" },
+        { status: 401 }
+      );
+    }
 
     if (!isValidSignature) {
       return NextResponse.json(
@@ -84,18 +165,35 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const user = mockCheckWalletAuth(address);
+    // ✅ 2. 检查用户是否存在
+    let user = await checkUserExists(address);
 
     if (user.success === false) {
-      return NextResponse.json({ status: "not_found" }); // 需要注册
+      console.log("👤 用户不存在，尝试自动注册:", address);
+
+      // ✅ 使用 Prisma 直接注册（不再 fetch API）
+      const registeredUser = await autoRegisterUser(address);
+      if (!registeredUser) {
+        return NextResponse.json(
+          { status: "register_failed", message: "Failed to register user" },
+          { status: 500 }
+        );
+      }
+
+      user = registeredUser;
     }
 
-    // 成功认证，返回 token
-    if (user.success === true) {
-      return NextResponse.json({ status: "approved", token: true });
-    }
-
-    return NextResponse.json({ status: "unknown" });
+    // ✅ 3. 登录成功
+    return NextResponse.json({
+      status: "approved",
+      token: true,
+      message: "Login successful",
+      user: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+      },
+    });
   } catch (error) {
     console.error("Auth API error:", error);
     return NextResponse.json(
