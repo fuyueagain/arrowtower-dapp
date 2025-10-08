@@ -103,6 +103,15 @@ export async function mintForUser(targetUser: Address): Promise<{ tokenId: strin
     console.log('📝 交易哈希:', receipt.transactionHash);
     console.log('💸 燃烧 Gas:', receipt.gasUsed.toString());
 
+    //关键：打印日志看看触发了什么事件
+    console.log('\n📋 === 开始打印 receipt.logs ===');
+    console.log(JSON.stringify(
+      receipt.logs,
+      (key, value) => (typeof value === 'bigint' ? value.toString() : value),
+      2
+    ));
+    console.log('=== 结束打印 receipt.logs ===\n')
+
     // ✅ 验证最终状态
     const finalStatus = await publicClient.readContract({
       address: contractAddress,
@@ -121,17 +130,56 @@ export async function mintForUser(targetUser: Address): Promise<{ tokenId: strin
       return log.topics[0] === eventSignature;
     });
 
+    // ✅ 安全地从 Transfer 事件中提取 tokenId
     let tokenId = '';
-    if (nftMintedEvent) {
-      // tokenId 是第二个 indexed 参数，位于 topics[2]
-      tokenId = nftMintedEvent.topics[2] || '';
-      console.log('🎁 铸造的 tokenId:', tokenId);
-    } else {
-      console.warn('⚠️ 未找到 NFTMinted 事件，可能 ABI 或事件名不匹配');
+    const TRANSFER_EVENT = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+
+    for (const log of receipt.logs) {
+      // ✅ 检查 topics 存在且长度足够
+      if (!log.topics || log.topics.length < 4) continue;
+      if (log.topics[0] !== TRANSFER_EVENT) continue;
+
+      const topic1 = log.topics[1]; // from
+      const topic2 = log.topics[2]; // to
+      const topic3 = log.topics[3]; // tokenId
+
+      // ✅ 确保每个 topic 都存在
+      if (!topic1 || !topic2 || !topic3) {
+        console.warn('⚠️ Log topic 缺失');
+        continue;
+      }
+
+      try {
+        // 提取地址（取后 40 字符，即 20 字节）
+        const from = `0x${topic1.slice(-40)}`;
+        const to = `0x${topic2.slice(-40)}`;
+        const tokenHex = topic3;
+        const tokenDecimal = BigInt(tokenHex).toString();
+
+        console.log(`🔍 Transfer: ${from} → ${to}, tokenId: ${tokenDecimal}`);
+
+        // 判断是否是 mint（from == 0）且发送给了目标用户
+        if (
+          from === '0x0000000000000000000000000000000000000000' &&
+          to.toLowerCase() === targetUser.toLowerCase()
+        ) {
+          tokenId = tokenDecimal;
+          console.log('🎁 成功匹配 mint 事件，tokenId:', tokenId);
+          break; // 找到就退出
+        }
+      } catch (e) {
+        console.error('❌ 解析 log 失败:', e);
+        continue;
+      }
     }
 
-    // ✅ 返回 tokenId 和 txHash
-    return { tokenId, txHash: receipt.transactionHash };
+    if (!tokenId) {
+      console.warn('⚠️ 未找到 mint 的 Transfer 事件，可能不是标准 ERC-721 铸造');
+    } else {
+      console.log('✅ 成功获取 tokenId:', tokenId);
+    }
+
+  return { tokenId, txHash: receipt.transactionHash };
   } catch (error: any) {
     console.error('❌ 铸造失败:', error.message || error);
     if (error.shortMessage) console.error('📝 错误详情:', error.shortMessage);
