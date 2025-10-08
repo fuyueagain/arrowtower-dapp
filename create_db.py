@@ -76,6 +76,8 @@ CREATE INDEX IF NOT EXISTS "idx_checkin_user_route" ON "Checkin"("userId", "rout
 CREATE INDEX IF NOT EXISTS "idx_checkin_poi" ON "Checkin"("poiId");
 CREATE INDEX IF NOT EXISTS "idx_voucher_user_route" ON "Voucher"("userId", "routeId");
 CREATE INDEX IF NOT EXISTS "idx_poi_route_order" ON "POI"("routeId", "order");
+
+
 """
 
 # 连接数据库（不存在会自动创建）

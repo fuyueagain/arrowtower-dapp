@@ -12,6 +12,12 @@ yarn dev
 pnpm dev
 # or
 bun dev
+
+npm install next-auth
+
+python3 create_db.py
+
+npx prisma generate
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

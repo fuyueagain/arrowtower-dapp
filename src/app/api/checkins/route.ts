@@ -1,11 +1,23 @@
 // src/app/api/checkins/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { isAuthenticated } from '@/app/api/auth/[...nextauth]/utils';  
+import { handleCheckinApproval } from '@/jobs/checkin-handler';
 
 const prisma = new PrismaClient();
 
 // POST /api/checkins
 export async function POST(request: NextRequest) {
+
+  // 👉 1. 校验用户登录状态
+  // const user = await isAuthenticated(request);
+  // if (!user) {
+  //   return NextResponse.json(
+  //     { success: false, message: '未授权访问，请先登录' },
+  //     { status: 401 }
+  //   );
+  // }
+
   try {
     const body = await request.json();
 
@@ -30,7 +42,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("prisma.user.findUnique-------");
+    console.log("prisma.user.findUnique-------",walletAddress);
 
     // 2. 根据 walletAddress 查找用户
     const user = await prisma.user.findUnique({
@@ -38,6 +50,19 @@ export async function POST(request: NextRequest) {
     });
 
     console.log("rlt -------");
+
+    // const users = await prisma.user.findMany(); // 获取所有用户
+
+    // console.log(`\n📊 共找到 ${users.length} 个用户：\n`);
+    // console.log('='.repeat(80));
+
+    //  users.forEach((user, index) => {
+    //   console.log(`👤 用户 ${index + 1}:`);
+    //   console.log(`   ID:           ${user.id}`);
+    //   console.log(`   钱包地址:     ${user.walletAddress}`);
+    //   console.log(`   昵称:         ${user.nickname || '未设置'}`);      
+    //   console.log('-'.repeat(60));
+    // });    
 
     if (!user) {
       return NextResponse.json(
@@ -88,6 +113,9 @@ export async function POST(request: NextRequest) {
         poi: true,
       },
     });
+
+    // ✅ 事件驱动：检查是否完成路线并触发 NFT
+    await handleCheckinApproval(String(user.id), routeId);
 
     // 6. 计算路线进度
     const completedCheckins = await prisma.checkin.count({
