@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 查询该路线下的所有 POI，按 order 排序
-    const pois = await prisma.poi.findMany({
+    const pois = await prisma.pOI.findMany({
       where: { routeId },
       orderBy: { order: 'asc' },
     });

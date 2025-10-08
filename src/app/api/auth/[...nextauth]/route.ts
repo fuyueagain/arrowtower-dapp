@@ -1,6 +1,7 @@
 // app/api/auth/[...nextauth]/route.ts
 
 import NextAuth from "next-auth";
+import type { JWT as NextAuthJWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { verifyMessage } from "viem";
 import { PrismaClient } from "@prisma/client";
@@ -14,34 +15,20 @@ const prisma = globalForPrisma.prisma || new PrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
+
 // ----------------------------------------------------
 // 类型定义
 // ----------------------------------------------------
 type Role = "admin" | "user";
+// ✅ 添加这个局部类型定义
+type User = {
+  id: string;
+  name?: string | null;
+  address: string;
+  status: string;
+  role: Role;
+};
 
-declare module "next-auth" {
-  interface User {
-    id: string;
-    name: string;
-    address: string;
-    status: string;
-    role: Role;
-  }
-
-  interface Session {
-    user: User;
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    id: string;
-    name: string;
-    address: string;
-    status: string;
-    role: Role;
-  }
-}
 
 // 生成唯一 ID（用于自动注册）
 function generateId(data: string): string {
@@ -153,10 +140,13 @@ export const authOptions = {
   // JWT 回调：将用户信息写入 token
   // ----------------------------------------------------
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { 
+      token: NextAuthJWT & User;  // ✅ 使用重命名后的 JWT 类型
+      user?: User;
+    }) {
       if (user) {
         token.id = user.id;
-        token.name = user.name;
+        token.name = user.name ?? `User_${user.address.slice(-6)}`;
         token.address = user.address;
         token.status = user.status;
         token.role = user.role;
@@ -164,15 +154,30 @@ export const authOptions = {
       return token;
     },
 
-    async session({ session, token }) {
+    async session({ 
+      session, 
+      token 
+    }: { 
+      session: { 
+        user: User & { 
+          id: string; 
+          address: string; 
+          status: string; 
+          role: "admin" | "user"; 
+        }; 
+        expires: string 
+      }; 
+      token: NextAuthJWT & User 
+    }) {
       if (session.user) {
         session.user.id = token.id;
-        session.user.name = token.name;
+        session.user.name = token.name ?? `User_${token.address.slice(-6)}`;
         session.user.address = token.address;
         session.user.status = token.status;
         session.user.role = token.role;
       }
-      return session;
+
+      return session; // ✅ 自动包含 expires
     },
   },
 
@@ -184,7 +189,7 @@ export const authOptions = {
     signIn: "/auth/signin", // 可选：自定义登录页
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
     maxAge: 30 * 24 * 60 * 60, // 30 天
   },
 };
@@ -193,4 +198,3 @@ export const authOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-export { authOptions }; // ✅ 导出供其他 API 使用
