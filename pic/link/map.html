@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>交互式SVG地图</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .clickable-text {
+            cursor: pointer;
+        }
+        .clickable-text:hover {
+            opacity: 0.7;
+            fill: #0066cc !important;
+            text-decoration: underline;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>交互式SVG地图</h1>
+        <p style="text-align: center; color: #666;">点击文字访问相关链接</p>
+        
+        <!-- 直接引用SVG文件 -->
+        <object id="svgMap" data="ref.svg" type="image/svg+xml" width="100%" height="600px"></object>
+    </div>
+
+    <script>
+        document.getElementById('svgMap').addEventListener('load', function() {
+            try {
+                const svgDoc = this.contentDocument;
+                
+                // 处理 ref 元素 (text1)
+                const refElement = svgDoc.getElementById('text1');
+                if (refElement) {
+                    refElement.classList.add('clickable-text');
+                    refElement.addEventListener('click', function() {
+                        window.open('https://www.google.com/', '_blank');
+                    });
+                }
+                
+                // 处理 ref2 元素 (text1-5)
+                const ref2Element = svgDoc.getElementById('text1-5');
+                if (ref2Element) {
+                    ref2Element.classList.add('clickable-text');
+                    ref2Element.addEventListener('click', function() {
+                        window.open('https://www.youtube.com/', '_blank');
+                    });
+                }
+                
+                console.log('交互功能已启用: 幺妹灯工作室 → Google, 漆悦轩 → YouTube');
+                
+            } catch (error) {
+                // 如果由于CORS无法访问，提供备用方案
+                console.log('由于浏览器安全限制，请使用HTTP服务器运行此文件');
+                alert('点击功能需要HTTP服务器环境。当前链接：\n幺妹灯工作室 → https://www.google.com/\n漆悦轩 → https://www.youtube.com/');
+            }
+        });
+    </script>
+</body>
+</html>
