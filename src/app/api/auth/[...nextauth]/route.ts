@@ -4,17 +4,18 @@ import NextAuth from "next-auth";
 import type { JWT as NextAuthJWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { verifyMessage } from "viem";
-import { PrismaClient } from "@prisma/client";
+//import { PrismaClient } from "@prisma/client";
 import { createHash } from "crypto";
+import { checkUserExists, autoRegisterUser } from "@/lib/db/auth";
 
 // ----------------------------------------------------
 // Prisma 客户端（HMR 兼容）
 // ----------------------------------------------------
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+/* const globalForPrisma = global as unknown as { prisma: PrismaClient };
 const prisma = globalForPrisma.prisma || new PrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
-
+ */
 
 // ----------------------------------------------------
 // 类型定义
@@ -45,53 +46,39 @@ async function getUserOrRegister(address: string): Promise<User | null> {
   const lowerCaseAddress = address.toLowerCase();
 
   try {
-    // 先查询
-    let user = await prisma.user.findUnique({
-      where: { walletAddress: lowerCaseAddress },
-      select: { id: true, nickname: true, role: true },
-    });
-
-    if (user) {
+    // 先检查用户是否存在
+    const existingUser = await checkUserExists(lowerCaseAddress);
+    
+    if (existingUser.success) {
       return {
-        id: user.id,
-        name: user.nickname,
+        id: existingUser.id!,
+        name: existingUser.name!,
         address: lowerCaseAddress,
         status: "approved",
-        role: user.role as Role,
+        role: existingUser.role as Role,
       };
     }
 
     // 用户不存在 → 自动注册
-    const id = generateId(address);
-    const nickname = `User_${address.slice(-6)}`;
+    const newUser = await autoRegisterUser(lowerCaseAddress);
 
-    const newUser = await prisma.user.create({
-      data: {
-        id,
-        walletAddress: lowerCaseAddress,
-        walletType: "evm",
-        nickname,
-        avatar: "/default-avatar.png",
-        totalRoutes: 0,
-      },
-      select: { id: true, nickname: true, role: true },
-    });
+    if (newUser) {
+      return {
+        id: newUser.id,
+        name: newUser.name,
+        address: lowerCaseAddress,
+        status: "approved",
+        role: newUser.role as Role,
+      };
+    }
 
-    console.log("✅ 自动注册用户:", address);
-
-    return {
-      id: newUser.id,
-      name: newUser.nickname,
-      address: lowerCaseAddress,
-      status: "approved",
-      role: newUser.role as Role,
-    };
+    // 自动注册失败
+    return null;
   } catch (error: any) {
-    console.error("数据库操作失败:", error);
+    console.error("获取或注册用户失败:", error);
     return null;
   }
 }
-
 // 👇 将 NextAuth 配置提取为可导出的 authOptions
 export const authOptions = {
   providers: [

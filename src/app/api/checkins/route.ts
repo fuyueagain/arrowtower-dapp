@@ -1,7 +1,7 @@
 // src/app/api/checkins/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { isAuthenticated } from '@/app/api/auth/[...nextauth]/utils';  
+//import { isAuthenticated } from '@/app/api/auth/[...nextauth]/utils';  
 import { handleCheckinApproval } from '@/jobs/checkin-handler';
 
 const prisma = new PrismaClient();
