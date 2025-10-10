@@ -40,6 +40,6 @@ export async function handleCheckinApproval(userId: string, routeId: string): Pr
 
     processed.add(taskKey);
   } catch (error) {
-    logger.error(`❌ 处理用户 ${userId} 路线 ${routeId} 时出错:`, error);
+    logger.error(`❌ 处理用户 ${userId} 路线 ${routeId} 时出错: ${error}`);
   }
 }

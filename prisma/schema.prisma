@@ -137,8 +137,8 @@ model Metadata {
   external_url    String
   background_color String
   
-  // 使用JSON字段存储动态属性
-  attributes      Json
+  // 使用JSON字段存储动态属性，定义为string类型
+  attributes      String
   
   // 时间戳
   createdAt DateTime @default(now())

@@ -62,7 +62,7 @@ async function processMintTask(voucherId: string) {
 
     logger.info(`✅ NFT 铸造成功: 用户 ${voucher.userId}, 凭证 ${voucherId}`);
   } catch (error) {
-    logger.error(`❌ 铸造失败 (凭证: ${voucherId}):`, error);
+    logger.error(`❌ 铸造失败 (凭证: ${voucherId}):${error}`);
 
     await prisma.voucher.update({
       where: { id: voucherId },
