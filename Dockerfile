@@ -10,7 +10,9 @@ WORKDIR /app
 
 # 复制包管理文件
 COPY package.json package-lock.json* ./
-RUN npm ci
+
+# 安装所有依赖（包括 devDependencies）
+RUN npm install
 
 # 复制 Prisma schema
 COPY prisma ./prisma/
@@ -50,6 +52,7 @@ RUN addgroup -g 1001 -S nodejs && \
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 # 设置权限
 RUN chown -R nextjs:nodejs /app
