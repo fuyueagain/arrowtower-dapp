@@ -20,7 +20,7 @@ async function main() {
   
   const nftName = "Arrow Tower Village NFT";
   const nftSymbol = "ATVNFT";
-  const nftBaseURI = "https://arrowtower.example.com/metadata/";
+  const nftBaseURI = "https://arrowtower.netlify.app/metadata/";
   
   console.log("NFT 配置参数:");
   console.log(`   名称: ${nftName}`);
@@ -363,40 +363,7 @@ async function main() {
   console.log("✅ 所有功能测试通过！");
   console.log("=====================================\n");
   
-  // 输出用于验证的 JSON 配置
-/*   const deploymentInfo = {
-    network: hre.network.name,
-    deployer: owner.address,
-    timestamp: new Date().toISOString(),
-    contracts: {
-      nft: standaloneNFTAddr,
-      minter: standaloneMinterAddr
-    },
-    stats: {
-      name: await standaloneNFT.name(),
-      symbol: await standaloneNFT.symbol(),
-      totalSupply: String(standaloneTotal),
-      contractStats: finalStandaloneStats,
-      testUsers: wallets.length + 1
-    }
-  };
 
-  // 写入文件
-  const outDir = path.resolve(process.cwd(), "deployments");
-  fs.mkdirSync(outDir, { recursive: true });
-  const outPath = path.join(outDir, `${hre.network.name}-${Date.now()}.json`);
-  fs.writeFileSync(outPath, JSON.stringify(deploymentInfo, null, 2), { encoding: "utf-8" });
-
-  console.log(`部署信息已写入: ${outPath}`);
-  console.log("部署信息 (摘要):");
-  console.log(JSON.stringify({
-    network: deploymentInfo.network,
-    deployer: deploymentInfo.deployer,
-    contracts: deploymentInfo.contracts
-  }, null, 2));
-
-  // 返回部署信息（方便脚本测试时 programmatic 使用）
-  return deploymentInfo; */
 } 
 
 main().then(info => {
