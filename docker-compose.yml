@@ -20,7 +20,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Next.js 应用 - 使用 Node.js 24
+  # Next.js 应用
   app:
     build:
       context: .
@@ -28,7 +28,7 @@ services:
     container_name: arrowtower-app
     restart: unless-stopped
     ports:
-      - "30000:3000"   
+      - "30000:3001"
     environment:
       # 数据库连接
       DATABASE_URL: ${DATABASE_URL}
@@ -49,13 +49,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: >
-      sh -c "
-        npx prisma migrate deploy &&
-        node server.js
-      "
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/api/health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
