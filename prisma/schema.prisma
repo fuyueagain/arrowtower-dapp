@@ -48,7 +48,7 @@ model Route {
 }
 
 model POI {
-  id          String   @id @default(cuid()) 
+  id          String   //@id @default(cuid()) 
   routeId     String   
   route       Route    @relation(fields: [routeId], references: [id])
   name        String
