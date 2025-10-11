@@ -27,10 +27,10 @@ RUN addgroup -g 1001 -S nodejs && \
 
 USER nextjs
 
-EXPOSE 3001
+EXPOSE 3000
 
 ENV NODE_ENV=production
-ENV PORT=3001
+ENV PORT=3000
 
 # 使用单独的启动脚本避免语法问题
 CMD ["sh", "-c", "echo 'Running database migrations...' && npx prisma migrate deploy && echo 'Running seed data...' && npx tsx prisma/seed.ts && echo 'Starting application...' && npm start"]
