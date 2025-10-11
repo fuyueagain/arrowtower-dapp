@@ -1,5 +1,4 @@
-# 简化版 Dockerfile - 直接使用 npm start
-FROM node:20-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
@@ -33,5 +32,5 @@ EXPOSE 3001
 ENV NODE_ENV=production
 ENV PORT=3001
 
-# 直接启动（包含数据库迁移）
-CMD sh -c "npx prisma migrate deploy && npm start"
+# 使用单独的启动脚本避免语法问题
+CMD ["sh", "-c", "echo 'Running database migrations...' && npx prisma migrate deploy && echo 'Running seed data...' && npx tsx prisma/seed.ts && echo 'Starting application...' && npm start"]
