@@ -1,57 +1,37 @@
-# 多阶段构建 Dockerfile - 普通模式（非 standalone）
-FROM node:24-alpine AS deps
-
-RUN apk add --no-cache libc6-compat python3 make g++
+# 简化版 Dockerfile - 直接使用 npm start
+FROM node:20-alpine
 
 WORKDIR /app
 
+# 安装系统依赖
+RUN apk add --no-cache curl python3 make g++
+
+# 复制 package 文件
 COPY package.json package-lock.json* ./
+
+# 安装依赖
 RUN npm install
 
-COPY prisma ./prisma/
-RUN npx prisma generate
-
-FROM node:24-alpine AS builder
-
-WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
+# 复制所有源码
 COPY . .
 
-ENV NEXT_TELEMETRY_DISABLED=1
+# 生成 Prisma 客户端
+RUN npx prisma generate
+
+# 构建应用
 RUN npm run build
-
-FROM node:24-alpine AS runner
-
-WORKDIR /app
-
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-
-# 安装 PM2 和 curl
-RUN npm install -g pm2 && apk add --no-cache curl
 
 # 创建非 root 用户
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001
-
-# 复制必要的文件（普通模式）
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/ecosystem.config.js ./ecosystem.config.js
-
-# 设置权限
-RUN chown -R nextjs:nodejs /app
+    adduser -S nextjs -u 1001 && \
+    chown -R nextjs:nodejs /app
 
 USER nextjs
 
 EXPOSE 3001
 
+ENV NODE_ENV=production
 ENV PORT=3001
-ENV HOSTNAME="0.0.0.0"
 
-# 使用 PM2 启动应用
-CMD sh -c "npx prisma migrate deploy && pm2-runtime start ecosystem.config.js --env production"
+# 直接启动（包含数据库迁移）
+CMD sh -c "npx prisma migrate deploy && npm start"
