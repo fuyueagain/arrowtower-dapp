@@ -4,13 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "dev:api": "ts-node src/server.ts",
-    "dev:watcher": "ts-node src/jobs/checkin-watcher.ts",
-    "dev:processor": "ts-node src/jobs/mint-processor.ts",
-    "dev:all": "concurrently \"npm run dev\" \"npm run dev:watcher\" \"npm run dev:processor\"",
     "build": "next build --turbopack",
     "start": "next start",
-    "test": "jest"
+    "test": "jest",
+    "init:db":"npx tsx prisma/initdb.ts",
+    "reset:db":"npx tsx prisma/resetdb.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.3",
