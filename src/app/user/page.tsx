@@ -117,7 +117,7 @@ export default function UserPage() {
         }
       );
     }
-  }, []);
+  }, []); // 只在组件挂载时执行一次, []);
 
   // 加载路线数据
   useEffect(() => {
@@ -266,14 +266,11 @@ export default function UserPage() {
           setCompletedPOIs(prev => new Set([...prev, poiData.order]));
         }
         
-        // 3秒后清除打卡结果，避免长期显示
-        setTimeout(() => {
-          setCheckinResult(null);
-        }, 5000);
+        // 注意：不再清除 checkinResult，让打卡进度一直显示
       } else {
         showNotification('error', result.message || '打卡失败，请重试');
         
-        // 打卡失败2秒后清除结果提示
+        // 打卡失败后，2秒后清除失败结果，允许用户重试
         setTimeout(() => {
           setCheckinResult(null);
         }, 3000);
@@ -349,8 +346,8 @@ export default function UserPage() {
           )}
         </div>
 
-        {/* 打卡结果 */}
-        {checkinResult && (
+        {/* 打卡进度 - 始终显示 */}
+        {selectedRoute && pois.length > 0 && (
           <div className="mt-4 max-w-6xl mx-auto">
             <CheckinProgress 
               result={checkinResult}
@@ -358,6 +355,8 @@ export default function UserPage() {
                 name: poi.name,
                 order: poi.order
               }))}
+              routeName={routes.find(r => r.id === selectedRoute)?.name}
+              totalPOIs={pois.length}
             />
           </div>
         )}

@@ -28,10 +28,96 @@ interface CheckinResult {
 interface CheckinProgressProps {
   result: CheckinResult | null;
   completedPOIs?: Array<{ name: string; order: number }>; // 从父组件传入的已完成列表
+  routeName?: string; // 路线名称
+  totalPOIs?: number; // 总景点数
 }
 
-export function CheckinProgress({ result, completedPOIs = [] }: CheckinProgressProps) {
-  if (!result) return null;
+export function CheckinProgress({ result, completedPOIs = [], routeName, totalPOIs }: CheckinProgressProps) {
+  // 如果没有 result，显示基本的进度卡片
+  if (!result) {
+    const completed = completedPOIs.length;
+    const total = totalPOIs || 3; // 默认3个景点
+    const isRouteCompleted = completed >= total;
+    
+    return (
+      <Card className="p-6 border-l-4 border-blue-500">
+        <h3 className="text-lg font-bold mb-4 text-blue-900">
+          🎯 打卡进度
+        </h3>
+        
+        <div className="space-y-4">
+          {/* 路线进度 */}
+          <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200">
+            <h4 className="font-bold text-blue-900 mb-3">🛤️ {routeName || '当前路线'}</h4>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-blue-700 font-medium">
+                已完成 {completed} / {total}
+              </span>
+              <Badge 
+                className={isRouteCompleted ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white'}
+              >
+                {isRouteCompleted ? '已完成' : '进行中'}
+              </Badge>
+            </div>
+            <div className="w-full bg-blue-200 rounded-full h-3 mb-3">
+              <div 
+                className="bg-gradient-to-r from-blue-500 to-emerald-500 h-3 rounded-full transition-all duration-500"
+                style={{ 
+                  width: `${(completed / total) * 100}%` 
+                }}
+              ></div>
+            </div>
+            
+            {/* 已打卡的景点列表 */}
+            {completedPOIs.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-blue-200">
+                <p className="text-xs text-blue-600 font-semibold mb-2">✓ 已打卡景点：</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {completedPOIs.map((poi, index) => (
+                    <Badge 
+                      key={index}
+                      variant="outline" 
+                      className="text-xs border-emerald-400 text-emerald-700 bg-emerald-50"
+                    >
+                      {poi.name}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 完成提示或鼓励信息 */}
+          {isRouteCompleted ? (
+            <div className="p-4 bg-gradient-to-br from-emerald-100 to-green-100 rounded-lg border-2 border-emerald-300">
+              <h4 className="font-bold text-emerald-900 mb-2 text-lg">🎉 恭喜！</h4>
+              <p className="text-base text-emerald-800 font-medium">
+                已完成所有打卡点，NFT 奖励即将发放！
+              </p>
+            </div>
+          ) : completed > 0 && (
+            <div className="p-4 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg border-2 border-yellow-300">
+              <h4 className="font-bold text-yellow-900 mb-2">💪 继续加油</h4>
+              <p className="text-base text-yellow-800 font-medium">
+                还有 {total - completed} 个景点等待打卡！
+              </p>
+            </div>
+          )}
+          
+          {completed === 0 && (
+            <div className="p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-lg border-2 border-gray-300">
+              <h4 className="font-bold text-gray-900 mb-2">🗺️ 开始探索</h4>
+              <p className="text-base text-gray-800 font-medium">
+                点击地图上的景点开始打卡吧！
+              </p>
+            </div>
+          )}
+        </div>
+      </Card>
+    );
+  }
+  
+  // 有 result 时，显示详细的打卡结果
 
   const isRouteCompleted = result.data?.routeProgress.isRouteCompleted || false;
   const willMint = result.data?.nftStatus.willMint || false;
