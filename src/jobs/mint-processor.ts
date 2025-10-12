@@ -19,10 +19,105 @@ async function startWorker() {
 
   while (mintQueue.length > 0) {
     const voucherId = mintQueue.shift()!; // 取出第一个任务
-    await processMintTask(voucherId);
+    await processMintTask(voucherId);    
   }
 
   isProcessing = false;
+}
+
+
+async function generateVoucherMetadata(voucherId: string) {
+  console.log('---------metedata');
+  try {
+    // 执行等价于你 SQL 的查询
+    const result = await prisma.voucher.findUnique({
+      where: { id: voucherId },
+      include: {
+        user: true,
+        route: true,
+        // 注意：Voucher 和 Checkin 没有直接关系，需通过 routeId + userId 关联
+      },
+    });   
+
+    if (!result) {
+      throw new Error('Voucher not found');
+    }
+
+    const { user, route } = result;
+
+    // 查询该用户在该路线上的所有打卡记录（Checkin），并获取对应的 POI 信息
+    const checkins = await prisma.checkin.findMany({
+      where: {
+        userId: user.id,
+        routeId: route.id,
+      },
+      include: {
+        poi: {
+          select: {
+            name: true,
+            description: true,
+          },
+        },
+      },
+    });
+
+    if (checkins.length === 0) {
+      throw new Error('No checkins found for this voucher');
+    }
+
+    // 假设我们只取第一个打卡点的信息作为代表（或可聚合所有 POI）
+    const firstPoi = checkins[0].poi;
+
+    // 构造 metadata JSON（符合你的 Metadata 模型）
+    const metadata = {
+      name: `Completion Badge: ${route.name}`,
+      description: `NFT awarded to ${user.nickname} (${user.walletAddress}) for completing the route "${route.name}". Verified via on-chain check-ins at multiple points of interest.`,
+      image: route.coverImage || `https://arrowtower.netlify.app/pic/img_1.svg`,
+      external_url: `https://arrowtower.netlify.app/user/${user.id}/route/${route.id}`,
+      background_color: "000000",
+
+      // attributes 是字符串类型，但通常存储 JSON 字符串
+      attributes: JSON.stringify([
+        {
+          trait_type: "Route",
+          value: route.name,
+        },
+        {
+          trait_type: "User",
+          value: user.nickname,
+        },
+        {
+          trait_type: "Wallet Address",
+          value: user.walletAddress,
+        },
+        {
+          trait_type: "Completion Status",
+          value: result.status,
+        },
+        {
+          trait_type: "POIs Visited",
+          value: checkins.length,
+        },
+        {
+          trait_type: "Estimated Time",
+          value: `${route.estimatedTime} minutes`,
+        },
+        {
+          trait_type: "Difficulty",
+          value: route.difficulty,
+        },
+      ]),
+
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    
+    console.log(metadata);
+    return metadata;
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    throw error;
+  }
 }
 
 // ✅ 处理单个铸造任务
@@ -50,6 +145,9 @@ async function processMintTask(voucherId: string) {
 
     console.log('mintForUser铸造函数result : ',result);
 
+    // 生成 metaData信息
+    const metadata = await generateVoucherMetadata(voucherId);
+
     // ✅ 更新凭证状态
     await prisma.voucher.update({
       where: { id: voucherId },
@@ -57,6 +155,7 @@ async function processMintTask(voucherId: string) {
         status: 'minted',
         nftTokenId: result?.tokenId || null,
         mintTxHash: result?.txHash || null,
+        metadata: metadata || null,
       },
     });
 
