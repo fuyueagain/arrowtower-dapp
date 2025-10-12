@@ -68,11 +68,13 @@ async function generateVoucherMetadata(voucherId: string) {
     // 假设我们只取第一个打卡点的信息作为代表（或可聚合所有 POI）
     const firstPoi = checkins[0].poi;
 
+    const img_ramdom = Math.floor(Math.random() * 25) + 1;
+
     // 构造 metadata JSON（符合你的 Metadata 模型）
     const metadata = {
       name: `Completion Badge: ${route.name}`,
       description: `NFT awarded to ${user.nickname} (${user.walletAddress}) for completing the route "${route.name}". Verified via on-chain check-ins at multiple points of interest.`,
-      image: route.coverImage || `https://arrowtower.netlify.app/pic/img_1.svg`,
+      image: `https://arrowtower.netlify.app/pic/img_${img_ramdom}.svg`,
       external_url: `https://arrowtower.netlify.app/user/${user.id}/route/${route.id}`,
       background_color: "000000",
 
