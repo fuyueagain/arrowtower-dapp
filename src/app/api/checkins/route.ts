@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
     });
 
     console.log("rlt -------");
+    console.log(user)
 
     // const users = await prisma.user.findMany(); // 获取所有用户
 

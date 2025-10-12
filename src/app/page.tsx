@@ -18,13 +18,12 @@ type AuthState =
   | "pending"
   | "error";
 
-const getTitle = () => process.env.NEXT_PUBLIC_ITEM_TITLE || "Arrowtower";
+const getTitle = () => process.env.NEXT_PUBLIC_ITEM_TITLE || "Arrow Tower";
 
 export default function Home() {
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const router = useRouter();
-  // session.user 现在具有 role 属性，依赖于 next-auth.d.ts 的类型扩展
   const { status, data: session } = useSession(); 
 
   const [authState, setAuthState] = useState<AuthState>("initial");
@@ -46,21 +45,17 @@ export default function Home() {
 
           setAuthState("authenticating");
 
-          // 调用自定义的 signin API 路由
           const response = await fetch("/api/auth/signin", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ address, signature }), // 确保 address 和 signature 被正确发送
+            body: JSON.stringify({ address, signature }),
           });
 
-          // 如果响应的 content-type 不是 application/json (例如服务器 500 错误)，
-          // 这里的 response.json() 可能会抛出错误，但会被外部 try-catch 捕获。
           const data = await response.json(); 
 
           if (data.token) {
-            // 成功验证，调用 NextAuth 的 signIn
             await signIn("credentials", {
               address,
               signature,
@@ -68,16 +63,13 @@ export default function Home() {
             });
             setAuthState("registered");
           } else if (data.status === "not_found") {
-            // 用户未找到，需要完成注册流程
             setAuthState("pending");
             router.push("/register");
           } else {
-            // Unexpected response or other non-token success
             setAuthState("error");
             setErrorMessage("Unknown authentication status or rejected user.");
           }
         } catch (error) {
-          // 捕获签名失败、API调用失败（包括 API 内部的解构错误）等
           setAuthState("error");
           setErrorMessage(
             error instanceof Error ? error.message : "Authentication failed"
@@ -94,16 +86,12 @@ export default function Home() {
   }, [isConnected, address, router, signMessageAsync]);
 
   useEffect(() => {
-    // 简化的跳转逻辑
-    // 只有在 'authenticated' 状态下，且 session 和 user 存在时才进行跳转判断
     if (status === "authenticated" && isConnected && address && session?.user) {
-      // session.user 确定存在，可以直接访问 role
       const { role } = session.user;
       
       if (role === "admin") {
-        router.push("/admin"); // 管理员跳转到 /admin
+        router.push("/admin");
       } else {
-        // 其他所有已认证用户（user，或您定义的其他非 admin 角色）跳转到 /user
         router.push("/user"); 
       }
     }
@@ -114,37 +102,40 @@ export default function Home() {
     switch (authState) {
       case "initial":
         return (
-          <div className="flex flex-col items-center justify-center min-h-screen">
-            <div className="mb-4">
+          <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-green-700 mb-8">
+              {title}
+            </h1>
+            <div className="mb-8 rounded-2xl overflow-hidden shadow-2xl border-4 border-emerald-200">
               <Image
-                src="/vercel.svg"
-                alt="Logo"
-                width={100}
-                height={100}
+                src="/arrowtower.jpg"
+                alt="ArrowTower"
+                width={400}
+                height={400}
                 priority
+                className="object-cover"
               />
             </div>
-            <h1 className="text-3xl font-bold mb-4">{title}</h1>
-            <p className="mb-6 text-gray-600">请连接钱包以继续</p>
+            <p className="mb-6 text-gray-600 font-medium text-lg">请连接钱包以继续</p>
             <ConnectWallet />
           </div>
         );
 
       case "connecting":
         return (
-          <div className="flex items-center justify-center min-h-screen">
+          <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
             <div className="text-center">
-              <p className="text-2xl font-bold mb-4">钱包连接中...</p>
-              <div className="animate-spin w-10 h-10 mx-auto border-4 border-blue-500 border-t-transparent rounded-full"></div>
+              <p className="text-2xl font-bold mb-4 text-emerald-700">钱包连接中...</p>
+              <div className="animate-spin w-16 h-16 mx-auto border-4 border-emerald-500 border-t-transparent rounded-full"></div>
             </div>
           </div>
         );
 
       case "signing":
         return (
-          <div className="flex items-center justify-center min-h-screen">
+          <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
             <div className="text-center">
-              <p className="text-2xl font-bold mb-4">正在签名认证...</p>
+              <p className="text-2xl font-bold mb-4 text-emerald-700">正在签名认证...</p>
               <div className="animate-pulse text-gray-600">请在钱包中确认签名</div>
             </div>
           </div>
@@ -152,19 +143,19 @@ export default function Home() {
 
       case "authenticating":
         return (
-          <div className="flex items-center justify-center min-h-screen">
+          <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
             <div className="text-center">
-              <p className="text-2xl font-bold mb-4">认证中...</p>
-              <div className="animate-spin w-10 h-10 mx-auto border-4 border-green-500 border-t-transparent rounded-full"></div>
+              <p className="text-2xl font-bold mb-4 text-emerald-700">认证中...</p>
+              <div className="animate-spin w-16 h-16 mx-auto border-4 border-emerald-500 border-t-transparent rounded-full"></div>
             </div>
           </div>
         );
 
       case "pending":
         return (
-          <div className="flex items-center justify-center min-h-screen">
+          <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
             <div className="text-center">
-              <p className="text-2xl font-bold mb-4">注册处理中</p>
+              <p className="text-2xl font-bold mb-4 text-emerald-700">注册处理中</p>
               <p className="text-gray-600">请完成后续注册步骤</p>
             </div>
           </div>
@@ -172,16 +163,16 @@ export default function Home() {
 
       case "error":
         return (
-          <div className="flex items-center justify-center min-h-screen">
+          <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
             <div className="text-center">
               <p className="text-2xl font-bold mb-4 text-red-500">认证失败</p>
-              {errorMessage && <p className="text-gray-600">{errorMessage}</p>}
+              {errorMessage && <p className="text-gray-600 mb-4">{errorMessage}</p>}
               <button
                 onClick={() => {
                   setAuthState("initial");
                   setErrorMessage(null);
                 }}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                className="mt-4 px-6 py-3 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 font-semibold shadow-lg transition-all duration-200"
               >
                 重新尝试
               </button>
@@ -190,7 +181,6 @@ export default function Home() {
         );
 
       default:
-        // 'registered' 状态下会触发 useEffect 进行跳转，因此这里返回 null
         return null;
     }
   };

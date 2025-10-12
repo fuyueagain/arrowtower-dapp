@@ -1,79 +1,362 @@
-// app/user/page.tsx
-"use client";
+// /app/user/page.tsx
+'use client';
 
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useAccount, useSignMessage } from 'wagmi';
+import { MapViewer, POIInfo } from '@/components/maps/MapViewer';
+import { POIDetailModal, POI } from '@/components/maps/POIDetailModal';
+import { SignatureConfirm } from '@/components/maps/SignatureConfirm';
+import { CheckinProgress } from '@/components/maps/CheckinProgress';
+import { ArrowTowerHeader } from '@/components/maps/ArrowTowerHeader';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
+// 类型定义
+interface Route {
+  id: string;
+  name: string;
+  description: string | null;
+  poiCount: number;
+}
+
+interface CheckinResponse {
+  success: boolean;
+  data?: {
+    checkinId: string;
+    status: string;
+    poi: {
+      id: string;
+      name: string;
+      order: number;
+    };
+    routeProgress: {
+      completed: number;
+      total: number;
+      nextPOI: { id: string; name: string } | null;
+      isRouteCompleted: boolean;
+    };
+    nftStatus: {
+      willMint: boolean;
+      remainingPOIs: number;
+    };
+    timestamp: string;
+  };
+  message?: string;
+  timestamp: string;
+}
 
 export default function UserPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { address, isConnected } = useAccount();
+  const { signMessageAsync } = useSignMessage();
 
-  // 保护路由：如果用户未登录，则重定向
+  // 状态管理
+  const [selectedPOI, setSelectedPOI] = useState<POIInfo | null>(null);
+  const [poiData, setPOIData] = useState<POI | null>(null);
+  const [showSignatureDialog, setShowSignatureDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [checkinResult, setCheckinResult] = useState<CheckinResponse | null>(null);
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error' | 'warning';
+    message: string;
+  } | null>(null);
+  const [completedPOIs, setCompletedPOIs] = useState<Set<number>>(new Set());
+
+  // 路线和 POI 数据
+  const [routes, setRoutes] = useState<Route[]>([]);
+  const [pois, setPois] = useState<POI[]>([]);
+  const [selectedRoute, setSelectedRoute] = useState<string>('');
+
+  // 用户位置
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+    timestamp: string;
+  } | null>(null);
+
+  // 保护路由
   useEffect(() => {
-    if (status === "loading") return; // 等待会话加载
+    if (status === "loading") return;
     
-    // 如果未登录，重定向到首页
     if (status === "unauthenticated") {
       router.push("/");
     }
-  }, [status, router]); // 这里的依赖项已简化
+  }, [status, router]);
 
-  // 在 session 加载中或未认证时，显示加载/重定向状态
-  // **注意:** 我们不再需要检查 status === "unauthenticated" 因为 useEffect 已经处理了重定向
+  // 显示通知
+  const showNotification = (type: 'success' | 'error' | 'warning', message: string) => {
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
+  // 获取用户位置
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            timestamp: new Date().toISOString()
+          });
+        },
+        (error) => {
+          console.warn('获取位置失败:', error);
+          setUserLocation({
+            latitude: 30.123567,
+            longitude: 103.456890,
+            accuracy: 12.5,
+            timestamp: new Date().toISOString()
+          });
+        }
+      );
+    }
+  }, []);
+
+  // 加载路线数据
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      try {
+        const response = await fetch('/api/route_list?page=1&limit=20&isActive=true');
+        const result = await response.json();
+        
+        if (result.success && result.data?.routes) {
+          setRoutes(result.data.routes);
+          if (result.data.routes.length > 0) {
+            setSelectedRoute(result.data.routes[0].id);
+          }
+        }
+      } catch (error) {
+        console.error('获取路线失败:', error);
+        showNotification('error', '网络错误，无法获取路线');
+      }
+    };
+    fetchRoutes();
+  }, []);
+
+  // 加载 POI 数据
+  useEffect(() => {
+    if (selectedRoute) {
+      const fetchPOIs = async () => {
+        try {
+          const response = await fetch(`/api/pois?routeId=${selectedRoute}`);
+          const result = await response.json();
+          
+          if (result.success && result.data) {
+            setPois(result.data);
+          }
+        } catch (error) {
+          console.error('获取打卡点失败:', error);
+        }
+      };
+      fetchPOIs();
+    }
+  }, [selectedRoute]);
+
+  // 处理地图点击
+  const handlePOIClick = (poiInfo: POIInfo) => {
+    setSelectedPOI(poiInfo);
+    const matchedPOI = pois.find(poi => poi.order === parseInt(poiInfo.poiNumber));
+    setPOIData(matchedPOI || null);
+  };
+
+  // 开始打卡流程
+  const handleStartCheckin = () => {
+    if (!isConnected || !address) {
+      showNotification('error', '请先连接钱包');
+      return;
+    }
+
+    if (!poiData) {
+      showNotification('error', '未找到打卡点数据');
+      return;
+    }
+
+    setShowSignatureDialog(true);
+  };
+
+  // 生成签名消息
+  const generateSignatureMessage = (poiId: string) => {
+    const nonce = Math.random().toString(36).substring(7);
+    return `ArrowTower Checkin: poi=${poiId}, nonce=${nonce}, timestamp=${Date.now()}`;
+  };
+
+  // 确认签名并提交打卡
+  const handleConfirmSignature = async () => {
+    if (!poiData || !address) return;
+
+    setIsLoading(true);
+    try {
+      const message = generateSignatureMessage(poiData.id);
+      
+      // 使用 wagmi 的 signMessage
+      const signature = await signMessageAsync({ message });
+      
+      showNotification('success', '签名成功');
+
+      const submitData = {
+        routeId: selectedRoute,
+        poiId: poiData.id,
+        walletAddress: address.toLowerCase().trim(),
+        signature,
+        message,
+        location: userLocation,
+        taskData: {
+          type: poiData.taskType,
+          answer: '',
+          photoUrl: ''
+        },
+        deviceInfo: {
+          fingerprint: `device_fp_${Math.random().toString(36).substring(2)}`,
+          userAgent: navigator.userAgent
+        }
+      };
+
+      const response = await fetch('/api/checkins', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submitData),
+      });
+
+      const result = await response.json();
+      setCheckinResult(result);
+
+      if (result.success) {
+        showNotification('success', '打卡成功！');
+        setShowSignatureDialog(false);
+        setSelectedPOI(null);
+        setPOIData(null);
+        
+        if (poiData) {
+          setCompletedPOIs(prev => new Set([...prev, poiData.order]));
+        }
+      } else {
+        showNotification('error', result.message || '打卡失败，请重试');
+      }
+    } catch (error: any) {
+      console.error('打卡失败:', error);
+      showNotification('error', error.message || '打卡失败');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 加载中状态
   if (status === "loading") {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl">加载中...</p>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-emerald-50 to-green-50">
+        <div className="text-center">
+          <div className="animate-spin w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-xl text-emerald-700 font-bold">加载中...</p>
+        </div>
       </div>
     );
   }
 
-  // 1. 明确的退出条件检查：如果 status 是 authenticated，但 session 仍为 null (极少见但可能)，则回退到重定向
+  // 未登录重定向
   if (!session) {
-      router.push("/");
-      return null;
+    return null;
   }
-  
-  // 此时 session 确定存在，但我们仍然使用可选链来避免访问 session.user 时的 TS 警告
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
-        <h1 className="text-4xl font-extrabold text-blue-600 mb-4">
-          🌐 User Profile
-        </h1>
-        <p className="text-xl text-gray-700 mb-6">
-          你好,{" "}
-          <span className="font-semibold text-blue-600">
-            {/* 修复点 1: 使用可选链 ?. 和空值合并 ?? 确保安全访问 */}
-            {session.user?.name || session.user?.address || "用户"} 
-          </span>
-          ! 这是你的专属区域。
-        </p>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 py-4">
+      <div className="max-w-[98vw] mx-auto px-2 sm:px-4">
+        {/* 通知栏 */}
+        {notification && (
+          <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-2xl border-2 ${
+            notification.type === 'success' ? 'bg-emerald-500 border-emerald-600' :
+            notification.type === 'error' ? 'bg-red-500 border-red-600' : 'bg-yellow-500 border-yellow-600'
+          } text-white max-w-md animate-in slide-in-from-top-2 backdrop-blur-sm`}>
+            <p className="font-semibold">{notification.message}</p>
+          </div>
+        )}
 
-        <div className="text-left bg-blue-50 p-4 rounded-md mb-8 border border-blue-200">
-          <h2 className="text-lg font-bold text-blue-800 mb-2">会话信息 (JWT Claims)</h2>
-          <p className="text-sm">
-            {/* 修复点 2: 使用可选链安全访问 role */}
-            <strong>Role:</strong> <span className="font-mono text-blue-600">{session.user?.role}</span>
-          </p>
-          <p className="text-sm truncate">
-            {/* 修复点 3: 使用可选链安全访问 address */}
-            <strong>Address:</strong> <span className="font-mono">{session.user?.address}</span>
-          </p>
-          <p className="text-sm truncate">
-            {/* 修复点 4: 使用可选链安全访问 id */}
-            <strong>User ID:</strong> <span className="font-mono">{session.user?.id}</span>
-          </p>
+        {/* Header 组件 - 使用新的 wagmi 版本 */}
+        <ArrowTowerHeader />
+
+        {/* 头部 */}
+        <div className="text-center mb-4">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-green-700 mb-1">
+            🗺️ 箭塔探索地图
+          </h1>
+          <p className="text-gray-600 font-medium">点击地图景点查看详情并打卡</p>
         </div>
 
-        <button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150"
-        >
-          登出
-        </button>
+        {/* 地图居中显示 */}
+        <div className="mb-6 max-w-6xl mx-auto">
+          <MapViewer
+            mapSvgUrl="/map.svg"
+            onPOIClick={handlePOIClick}
+            routePOIs={pois.map(poi => poi.order)}
+            completedPOIs={completedPOIs}
+          />
+        </div>
+
+        {/* 底部：路线信息 */}
+        <div className="max-w-6xl mx-auto">
+          {selectedRoute && routes.length > 0 && (
+            <Card className="p-5 bg-white/80 backdrop-blur-sm shadow-lg border-2 border-emerald-200">
+              <h3 className="font-bold mb-3 text-emerald-900">🛤️ 当前路线</h3>
+              {routes.find(r => r.id === selectedRoute) && (
+                <div className="space-y-2 text-sm">
+                  <p className="font-bold text-emerald-700 text-lg">
+                    {routes.find(r => r.id === selectedRoute)?.name}
+                  </p>
+                  <p className="text-gray-700">
+                    {routes.find(r => r.id === selectedRoute)?.description}
+                  </p>
+                  <div className="flex items-center gap-2 pt-2">
+                    <Badge className="bg-emerald-600 text-white">
+                      共 {routes.find(r => r.id === selectedRoute)?.poiCount} 个打卡点
+                    </Badge>
+                    <Badge variant="outline" className="border-green-600 text-green-700">
+                      已完成 {completedPOIs.size} 个
+                    </Badge>
+                  </div>
+                </div>
+              )}
+            </Card>
+          )}
+        </div>
+
+        {/* 打卡结果 */}
+        {checkinResult && (
+          <div className="mt-4 max-w-6xl mx-auto">
+            <CheckinProgress result={checkinResult} />
+          </div>
+        )}
+
+        {/* POI 详情对话框 */}
+        {selectedPOI && (
+          <POIDetailModal
+            open={!!selectedPOI}
+            onClose={() => {
+              setSelectedPOI(null);
+              setPOIData(null);
+            }}
+            poiNumber={selectedPOI.poiNumber}
+            imageUrl={selectedPOI.imageUrl}
+            poiData={poiData}
+            onCheckin={handleStartCheckin}
+            isLoading={isLoading}
+          />
+        )}
+
+        {/* 签名确认对话框 */}
+        <SignatureConfirm
+          open={showSignatureDialog}
+          onConfirm={handleConfirmSignature}
+          onCancel={() => setShowSignatureDialog(false)}
+          poiName={poiData?.name}
+          isLoading={isLoading}
+        />
       </div>
     </div>
   );
