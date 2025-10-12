@@ -10,6 +10,7 @@ import { POIDetailModal, POI } from '@/components/maps/POIDetailModal';
 import { SignatureConfirm } from '@/components/maps/SignatureConfirm';
 import { CheckinProgress } from '@/components/maps/CheckinProgress';
 import { ArrowTowerHeader } from '@/components/maps/ArrowTowerHeader';
+import { RouteSelector } from '@/components/maps/RouteSelector';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -139,24 +140,50 @@ export default function UserPage() {
     fetchRoutes();
   }, []);
 
-  // 加载 POI 数据
+  // 加载 POI 数据和打卡记录
   useEffect(() => {
-    if (selectedRoute) {
-      const fetchPOIs = async () => {
+    if (selectedRoute && address) {
+      const fetchPOIsAndCheckins = async () => {
         try {
-          const response = await fetch(`/api/pois?routeId=${selectedRoute}`);
-          const result = await response.json();
+          // 获取 POI 列表
+          const poisResponse = await fetch(`/api/pois?routeId=${selectedRoute}`);
+          const poisResult = await poisResponse.json();
           
-          if (result.success && result.data) {
-            setPois(result.data);
+          if (poisResult.success && poisResult.data) {
+            // 过滤掉景点0（箭塔介绍），它不是打卡点
+            const filteredPOIs = poisResult.data.filter((poi: POI) => poi.order !== 0);
+            setPois(filteredPOIs);
+          }
+
+          // 获取该路线的打卡记录
+          const checkinsResponse = await fetch(`/api/checkins?routeId=${selectedRoute}&status=approved`);
+          const checkinsResult = await checkinsResponse.json();
+          
+          if (checkinsResult.success && checkinsResult.data?.checkins) {
+            // 过滤出当前用户的打卡记录，并提取 POI order
+            const userCheckins = checkinsResult.data.checkins.filter(
+              (checkin: any) => 
+                checkin.user?.walletAddress?.toLowerCase() === address?.toLowerCase() &&
+                checkin.route?.id === selectedRoute
+            );
+            
+            const completedOrders = new Set<number>(
+              userCheckins.map((checkin: any) => checkin.poi.order as number)
+            );
+            
+            console.log('📊 当前路线已完成的打卡:', Array.from(completedOrders), '用户:', address);
+            setCompletedPOIs(completedOrders);
+          } else {
+            // 如果没有打卡记录，清空已完成列表
+            setCompletedPOIs(new Set());
           }
         } catch (error) {
-          console.error('获取打卡点失败:', error);
+          console.error('获取数据失败:', error);
         }
       };
-      fetchPOIs();
+      fetchPOIsAndCheckins();
     }
-  }, [selectedRoute]);
+  }, [selectedRoute, address]); // 依赖路线和钱包地址
 
   // 处理地图点击
   const handlePOIClick = (poiInfo: POIInfo) => {
@@ -234,11 +261,22 @@ export default function UserPage() {
         setSelectedPOI(null);
         setPOIData(null);
         
+        // 更新已完成的POI列表
         if (poiData) {
           setCompletedPOIs(prev => new Set([...prev, poiData.order]));
         }
+        
+        // 3秒后清除打卡结果，避免长期显示
+        setTimeout(() => {
+          setCheckinResult(null);
+        }, 5000);
       } else {
         showNotification('error', result.message || '打卡失败，请重试');
+        
+        // 打卡失败2秒后清除结果提示
+        setTimeout(() => {
+          setCheckinResult(null);
+        }, 3000);
       }
     } catch (error: any) {
       console.error('打卡失败:', error);
@@ -299,37 +337,28 @@ export default function UserPage() {
           />
         </div>
 
-        {/* 底部：路线信息 */}
+        {/* 底部：路线选择器 */}
         <div className="max-w-6xl mx-auto">
-          {selectedRoute && routes.length > 0 && (
-            <Card className="p-5 bg-white/80 backdrop-blur-sm shadow-lg border-2 border-emerald-200">
-              <h3 className="font-bold mb-3 text-emerald-900">🛤️ 当前路线</h3>
-              {routes.find(r => r.id === selectedRoute) && (
-                <div className="space-y-2 text-sm">
-                  <p className="font-bold text-emerald-700 text-lg">
-                    {routes.find(r => r.id === selectedRoute)?.name}
-                  </p>
-                  <p className="text-gray-700">
-                    {routes.find(r => r.id === selectedRoute)?.description}
-                  </p>
-                  <div className="flex items-center gap-2 pt-2">
-                    <Badge className="bg-emerald-600 text-white">
-                      共 {routes.find(r => r.id === selectedRoute)?.poiCount} 个打卡点
-                    </Badge>
-                    <Badge variant="outline" className="border-green-600 text-green-700">
-                      已完成 {completedPOIs.size} 个
-                    </Badge>
-                  </div>
-                </div>
-              )}
-            </Card>
+          {routes.length > 0 && (
+            <RouteSelector
+              routes={routes}
+              selectedRoute={selectedRoute}
+              onSelectRoute={setSelectedRoute}
+              completedCount={completedPOIs.size}
+            />
           )}
         </div>
 
         {/* 打卡结果 */}
         {checkinResult && (
           <div className="mt-4 max-w-6xl mx-auto">
-            <CheckinProgress result={checkinResult} />
+            <CheckinProgress 
+              result={checkinResult}
+              completedPOIs={pois.filter(poi => completedPOIs.has(poi.order)).map(poi => ({
+                name: poi.name,
+                order: poi.order
+              }))}
+            />
           </div>
         )}
 
@@ -346,6 +375,7 @@ export default function UserPage() {
             poiData={poiData}
             onCheckin={handleStartCheckin}
             isLoading={isLoading}
+            isCompleted={completedPOIs.has(parseInt(selectedPOI.poiNumber))}
           />
         )}
 
