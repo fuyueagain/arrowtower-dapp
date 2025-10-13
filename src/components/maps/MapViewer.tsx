@@ -7,14 +7,26 @@ import { Button } from '@/components/ui/button';
 import { ZoomIn, ZoomOut, Maximize2, Loader2 } from 'lucide-react';
 
 // ID 到 POI 编号的映射（根据 SVG 中的实际 id 和 ref 属性）
+// text 元素：可点击触发详情对话框
+// path 元素：圆点，显示打卡状态（变色）
 const ID_TO_POI_MAP: { [key: string]: string } = {
-  'text1-9-3': '0',    // ref0 → 箭塔介绍（特殊）
+  'text1-9-3': '0',    // ref0 → 箭塔介绍（特殊，不可打卡）
   'text1': '2',        // ref2="111"  → img_2.svg
   'text1-3': '9',      // ref9="111"  → img_9.svg
   'text1-9': '22',     // ref22="111" → img_22.svg
   'text1-32': '11',    // ref11="111" → img_11.svg
   'text1-7': '21',     // ref21="111" → img_21.svg
   'text1-92': '20',    // ref20="111" → img_20.svg
+};
+
+// path 圆点到 POI 编号的映射（用于显示打卡进度）
+const PATH_TO_POI_MAP: { [key: string]: string } = {
+  'path1': '21',   // 景点21
+  'path2': '2',    // 景点2
+  'path3': '9',    // 景点9
+  'path4': '11',   // 景点11
+  'path5': '22',   // 景点22
+  'path6': '20',   // 景点20
 };
 
 export interface POIInfo {
@@ -114,7 +126,7 @@ export function MapViewer({
           svgElement.style.height = 'auto';
           svgElement.style.display = 'block';
           
-          // 绑定所有元素的事件
+          // 绑定所有 text 元素的事件（点击触发详情）
           const elementIds = Object.keys(ID_TO_POI_MAP);
           const handlers: Array<() => void> = [];
           
@@ -128,63 +140,15 @@ export function MapViewer({
               element.style.cursor = 'pointer';
               element.style.transition = 'all 0.3s ease';
               
-              // 获取 POI 信息
-              const poiNumber = parseInt(ID_TO_POI_MAP[elementId]);
-              const isInRoute = routePOIs.includes(poiNumber);
-              const isCompleted = completedPOIs.has(poiNumber);
-              
-              // 设置初始颜色
-              if (isCompleted) {
-                element.style.fill = '#10b981';
-              } else if (isInRoute) {
-                element.style.fill = '#60a5fa';
-              } else {
-                element.style.fill = '#d1d5db';
-              }
-              
-              // 悬停处理
-              const handleMouseEnter = () => {
-                console.log('🖱️ 鼠标进入:', elementId);
-                setHoveredRef(elementId);
-                element.style.fill = '#3b82f6';
-                element.style.filter = 'drop-shadow(0 0 10px rgba(59, 130, 246, 0.7))';
-              };
-              
-              const handleMouseLeave = () => {
-                setHoveredRef(null);
-                if (isCompleted) {
-                  element.style.fill = '#10b981';
-                } else if (isInRoute) {
-                  element.style.fill = '#60a5fa';
-                } else {
-                  element.style.fill = '#d1d5db';
-                }
-                element.style.filter = 'none';
-              };
-              
-              // 点击处理 - 关键！
+              // 点击处理 - 触发详情对话框
               const handleClick = (e: MouseEvent) => {
-                console.log('🎯🎯🎯 点击事件触发！', elementId);
+                console.log('🎯 文字点击事件触发！', elementId);
                 e.stopPropagation();
                 e.preventDefault();
                 
-                // 临时视觉反馈
-                element.style.fill = '#1e40af';
-                element.style.filter = 'drop-shadow(0 0 12px rgba(30, 64, 175, 0.9))';
-                setTimeout(() => {
-                  if (isCompleted) {
-                    element.style.fill = '#10b981';
-                  } else if (isInRoute) {
-                    element.style.fill = '#60a5fa';
-                  } else {
-                    element.style.fill = '#d1d5db';
-                  }
-                  element.style.filter = 'none';
-                }, 300);
-                
                 // 调用回调（使用 ref 中的最新值）
-                console.log('🎯 调用 onPOIClick:', elementId, '→ POI', ID_TO_POI_MAP[elementId]);
                 const poiNum = ID_TO_POI_MAP[elementId];
+                console.log('🎯 调用 onPOIClick:', elementId, '→ POI', poiNum);
                 onPOIClickRef.current({
                   refId: elementId,
                   poiNumber: poiNum,
@@ -193,20 +157,51 @@ export function MapViewer({
               };
               
               // 绑定事件
-              element.addEventListener('mouseenter', handleMouseEnter);
-              element.addEventListener('mouseleave', handleMouseLeave);
               element.addEventListener('click', handleClick);
               
               // 保存清理函数
               handlers.push(() => {
-                element.removeEventListener('mouseenter', handleMouseEnter);
-                element.removeEventListener('mouseleave', handleMouseLeave);
                 element.removeEventListener('click', handleClick);
               });
               
               console.log(`✅ #${elementId} 事件绑定完成`);
             } else {
               console.warn(`❌ 未找到 #${elementId}`);
+            }
+          });
+          
+          // 处理 path 圆点元素（显示打卡进度，不可点击）
+          const pathIds = Object.keys(PATH_TO_POI_MAP);
+          pathIds.forEach(pathId => {
+            const pathElement = document.getElementById(pathId);
+            
+            if (pathElement) {
+              console.log(`✅ 找到 #${pathId}，设置样式`);
+              
+              // 移除 pointer-events="none"，允许显示
+              pathElement.removeAttribute('pointer-events');
+              pathElement.style.transition = 'all 0.3s ease';
+              
+              // 获取 POI 信息
+              const poiNumber = parseInt(PATH_TO_POI_MAP[pathId]);
+              const isInRoute = routePOIs.includes(poiNumber);
+              const isCompleted = completedPOIs.has(poiNumber);
+              
+              // 设置初始颜色
+              if (isCompleted) {
+                pathElement.style.fill = '#10b981'; // 绿色 - 已完成
+                pathElement.style.fillOpacity = '1';
+              } else if (isInRoute) {
+                pathElement.style.fill = '#60a5fa'; // 蓝色 - 当前路线
+                pathElement.style.fillOpacity = '0.9';
+              } else {
+                pathElement.style.fill = '#9ca3af'; // 灰色 - 其他景点
+                pathElement.style.fillOpacity = '0.6';
+              }
+              
+              console.log(`✅ #${pathId} → POI ${poiNumber}, 路线内:${isInRoute}, 已完成:${isCompleted}`);
+            } else {
+              console.warn(`❌ 未找到 #${pathId}`);
             }
           });
           
@@ -221,26 +216,34 @@ export function MapViewer({
       });
   }, [mapSvgUrl]); // 只依赖 mapSvgUrl，避免重复加载！
 
-  // 单独的 useEffect 用于更新颜色（当 routePOIs 或 completedPOIs 变化时）
+  // 单独的 useEffect 用于更新 path 圆点颜色（当 routePOIs 或 completedPOIs 变化时）
   useEffect(() => {
     if (isLoading) return; // 等加载完成
     
-    const elementIds = Object.keys(ID_TO_POI_MAP);
-    elementIds.forEach(elementId => {
-      const element = document.getElementById(elementId);
-      if (element) {
-        const poiNumber = parseInt(ID_TO_POI_MAP[elementId]);
+    console.log('🎨 更新 path 圆点颜色，路线POI:', routePOIs, '已完成:', Array.from(completedPOIs));
+    
+    // 只更新 path 圆点的颜色
+    const pathIds = Object.keys(PATH_TO_POI_MAP);
+    pathIds.forEach(pathId => {
+      const pathElement = document.getElementById(pathId);
+      if (pathElement) {
+        const poiNumber = parseInt(PATH_TO_POI_MAP[pathId]);
         const isInRoute = routePOIs.includes(poiNumber);
         const isCompleted = completedPOIs.has(poiNumber);
         
         // 更新颜色
         if (isCompleted) {
-          element.style.fill = '#10b981';
+          pathElement.style.fill = '#10b981'; // 绿色 - 已完成
+          pathElement.style.fillOpacity = '1';
         } else if (isInRoute) {
-          element.style.fill = '#60a5fa';
+          pathElement.style.fill = '#60a5fa'; // 蓝色 - 当前路线
+          pathElement.style.fillOpacity = '0.9';
         } else {
-          element.style.fill = '#d1d5db';
+          pathElement.style.fill = '#9ca3af'; // 灰色 - 其他景点
+          pathElement.style.fillOpacity = '0.6';
         }
+        
+        console.log(`🎨 #${pathId} → POI ${poiNumber}, 路线内:${isInRoute}, 已完成:${isCompleted}, 颜色:${pathElement.style.fill}`);
       }
     });
   }, [routePOIs, completedPOIs, isLoading]); // 只更新颜色，不重新加载 SVG
@@ -350,11 +353,11 @@ export function MapViewer({
               <div className="space-y-3 text-sm">
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-full bg-blue-400 shadow-md"></div>
-                  <span className="text-emerald-700 font-medium">当前路线景点</span>
+                  <span className="text-emerald-700 font-medium">当前路线待打卡</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-full bg-emerald-500 shadow-md"></div>
-                  <span className="text-emerald-700 font-medium">已完成</span>
+                  <span className="text-emerald-700 font-medium">当前路线已打卡</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-full bg-gray-300 shadow-md"></div>

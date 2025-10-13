@@ -295,6 +295,7 @@ export async function GET(request: NextRequest) {
         user: {
           select: {
             id: true,
+            walletAddress: true,
             nickname: true,
             avatar: true,
           },
@@ -344,6 +345,7 @@ export async function GET(request: NextRequest) {
         },
         createdAt: checkin.createdAt.toISOString(),
         user: {
+          walletAddress: checkin.user.walletAddress,
           nickname: checkin.user.nickname,
           avatar: checkin.user.avatar,
         },
