@@ -129,20 +129,3 @@ model Voucher {
 }
 
 
-model Metadata {
-  id              Int     @id @default(autoincrement())
-  name            String
-  description     String
-  image           String
-  external_url    String
-  background_color String
-  
-  // 使用JSON字段存储动态属性，定义为string类型
-  attributes      String
-  
-  // 时间戳
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("metadata")
-}
