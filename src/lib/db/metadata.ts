@@ -1,154 +1,166 @@
 // src/lib/db/metadata.ts
 import { prisma } from './prisma';
+import { JsonValue } from '@prisma/client/runtime/library';
 
-export interface Attribute {
+// 定义属性项类型
+export interface AttributeItem {
   trait_type: string;
   value: string | number;
 }
 
-export interface CreateMetadataData {
-  name: string;
-  description: string;
-  image: string;
-  external_url: string;
-  background_color: string;
-  attributes: Attribute[];
-}
-
+// 定义 Metadata 响应类型
 export interface MetadataResponse {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-  external_url: string;
-  background_color: string;
-  attributes: Attribute[];
+  id: string;
+  userId: string;
+  routeId: string;
+  status: string;
+  nftTokenId: string | null;
+  mintTxHash: string | null;
+  metadata: any;
   createdAt: Date;
-  updatedAt: Date;
+  attributes?: AttributeItem[];
 }
 
-/** 类型守卫：运行时验证某个值是否为 Attribute */
-function isAttribute(obj: unknown): obj is Attribute {
-  if (typeof obj !== 'object' || obj === null) return false;
-  const anyObj = obj as Record<string, unknown>;
-  const hasTrait = typeof anyObj.trait_type === 'string';
-  const val = anyObj.value;
-  const hasValue = typeof val === 'string' || typeof val === 'number';
-  return hasTrait && hasValue;
+// 类型守卫，检查是否为对象
+function isObject(value: any): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-/**
- * 解析 attributes（兼容 String 存储或 Json 存储）
- * - raw 可能是 string（JSON）、可能是 array（Json field）、也可能是 object
- */
-function parseAttributesSafe(raw: unknown): Attribute[] {
-  if (raw == null) return [];
-
-  // 情形 1：已经是数组 -> 过滤并返回合法项
-  if (Array.isArray(raw)) {
-    return raw.filter(isAttribute) as Attribute[];
-  }
-
-  // 情形 2：字符串（可能是 JSON 字符串）
-  if (typeof raw === 'string') {
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed.filter(isAttribute) as Attribute[];
-      // 如果解析后是单个对象且符合 Attribute，则包成数组返回
-      if (isAttribute(parsed)) return [parsed];
-      return [];
-    } catch {
+// 安全解析 attributes - 专门处理你的数据格式
+function parseAttributesSafe(attributes: any): AttributeItem[] {
+  if (!attributes) return [];
+  
+  try {
+    // 如果 attributes 是字符串，尝试解析
+    if (typeof attributes === 'string') {
+      const parsed = JSON.parse(attributes);
+      // 检查解析后的结果是否为数组
+      if (Array.isArray(parsed)) {
+        return parsed as AttributeItem[];
+      }
       return [];
     }
-  }
-
-  // 情形 3：单个对象（非数组）
-  if (typeof raw === 'object') {
-    if (isAttribute(raw)) return [raw];
-    // 如果对象不是 Attribute，则可能是其他结构，返回空
+    
+    // 如果 attributes 已经是数组，直接返回
+    if (Array.isArray(attributes)) {
+      return attributes as AttributeItem[];
+    }
+    
+    return [];
+  } catch (error) {
+    console.error('解析 attributes 失败:', error);
     return [];
   }
-
-  // 其他类型（number/boolean/...） -> 返回空数组
-  return [];
 }
 
-// ---------- CRUD functions ----------
-export async function createMetadata(data: CreateMetadataData): Promise<MetadataResponse> {
+// 从 metadata 中安全提取 attributes
+function extractAttributesFromMetadata(metadata: JsonValue | null): any {
+  if (!metadata) return null;
+  
+  // 如果 metadata 是对象且包含 attributes 属性
+  if (isObject(metadata) && 'attributes' in metadata) {
+    return metadata.attributes;
+  }
+  
+  // 如果 metadata 本身就是 attributes 数组
+  if (Array.isArray(metadata)) {
+    return metadata;
+  }
+  
+  // 如果 metadata 是字符串，尝试解析
+  if (typeof metadata === 'string') {
+    try {
+      const parsed = JSON.parse(metadata);
+      if (isObject(parsed) && 'attributes' in parsed) {
+        return parsed.attributes;
+      }
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+  
+  return null;
+}
+
+// 获取完整的 metadata 对象
+function getFullMetadata(metadata: JsonValue | null): any {
+  if (!metadata) return null;
+  
   try {
-    // 注意：若 schema 中 attributes 是 String 则保持 stringify；若是 Json 则可直接传 data.attributes
-    const dbData = {
-      name: data.name,
-      description: data.description,
-      image: data.image,
-      external_url: data.external_url,
-      background_color: data.background_color,
-      attributes: JSON.stringify(data.attributes || []),
-    };
-
-    const metadata = await prisma.metadata.create({ data: dbData });
-
-    return {
-      ...metadata,
-      attributes: parseAttributesSafe((metadata as any).attributes),
-    } as MetadataResponse;
-  } catch (error) {
-    console.error('创建元数据失败:', error);
-    throw new Error('创建元数据失败');
+    if (typeof metadata === 'string') {
+      return JSON.parse(metadata);
+    }
+    return metadata;
+  } catch {
+    return null;
   }
 }
 
-export async function getMetadataById(id: number): Promise<MetadataResponse | null> {
+export async function getMetadataByTokenId(nftTokenId: string): Promise<MetadataResponse | null> {
   try {
-    const metadata = await prisma.metadata.findUnique({ where: { id } });
-    if (!metadata) return null;
+    // 通过 nftTokenId 查询 Voucher 记录
+    const voucher = await prisma.voucher.findFirst({
+      where: { 
+        nftTokenId: nftTokenId 
+      },
+      include: {
+        user: true,
+        route: true
+      }
+    });
 
+    if (!voucher) return null;
+
+    // 安全提取 attributes
+    const attributesSource = extractAttributesFromMetadata(voucher.metadata);
+    const fullMetadata = getFullMetadata(voucher.metadata);
+
+    // 返回包含解析后 attributes 的数据
     return {
-      ...metadata,
-      attributes: parseAttributesSafe((metadata as any).attributes),
+      ...voucher,
+      metadata: fullMetadata,
+      attributes: parseAttributesSafe(attributesSource),
     } as MetadataResponse;
   } catch (error) {
-    console.error('获取元数据失败:', error);
+    console.error('通过 NFT Token ID 获取元数据失败:', error);
     throw new Error('获取元数据失败');
   }
 }
 
-export async function updateMetadata(
-  id: number,
-  data: Partial<CreateMetadataData>
-): Promise<MetadataResponse> {
+// 通过 ID 获取元数据的函数
+export async function getMetadataById(id: string): Promise<MetadataResponse | null> {
   try {
-    const dbData: Record<string, any> = {};
-    if (data.name !== undefined) dbData.name = data.name;
-    if (data.description !== undefined) dbData.description = data.description;
-    if (data.image !== undefined) dbData.image = data.image;
-    if (data.external_url !== undefined) dbData.external_url = data.external_url;
-    if (data.background_color !== undefined) dbData.background_color = data.background_color;
-    if (data.attributes !== undefined) {
-      dbData.attributes = JSON.stringify(data.attributes || []);
-    }
-
-    const metadata = await prisma.metadata.update({
+    const voucher = await prisma.voucher.findUnique({ 
       where: { id },
-      data: dbData,
+      include: {
+        user: true,
+        route: true
+      }
     });
+    
+    if (!voucher) return null;
+
+    // 安全提取 attributes
+    const attributesSource = extractAttributesFromMetadata(voucher.metadata);
+    const fullMetadata = getFullMetadata(voucher.metadata);
 
     return {
-      ...metadata,
-      attributes: parseAttributesSafe((metadata as any).attributes),
+      ...voucher,
+      metadata: fullMetadata,
+      attributes: parseAttributesSafe(attributesSource),
     } as MetadataResponse;
   } catch (error) {
-    console.error('更新元数据失败:', error);
-    throw new Error('更新元数据失败');
+    console.error('通过 ID 获取元数据失败:', error);
+    throw new Error('获取元数据失败');
   }
 }
 
-export async function deleteMetadata(id: number): Promise<{ success: boolean }> {
-  try {
-    await prisma.metadata.delete({ where: { id } });
-    return { success: true };
-  } catch (error) {
-    console.error('删除元数据失败:', error);
-    throw new Error('删除元数据失败');
-  }
+// 获取特定属性的值
+export function getAttributeValue(attributes: AttributeItem[], traitType: string): string | number | undefined {
+  const attribute = attributes.find(attr => attr.trait_type === traitType);
+  return attribute?.value;
 }

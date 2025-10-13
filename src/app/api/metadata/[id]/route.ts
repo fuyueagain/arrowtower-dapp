@@ -1,6 +1,6 @@
 // app/api/metadata/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { getMetadataById } from '@/lib/db/metadata';
+import { getMetadataByTokenId} from '@/lib/db/metadata';
 
 interface RouteParams {
   params: Promise<{
@@ -11,30 +11,38 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     // 首先 await params
-    const { id: idString } = await params;
-    const id = parseInt(idString, 10);
+    const { id } = await params;
 
-    if (isNaN(id)) {
-      return NextResponse.json({ error: '无效的ID格式' }, { status: 400 });
+    // 检查 id 是否为有效的 tokenId 格式（字符串）
+    if (!id || typeof id !== 'string') {
+      return NextResponse.json({ error: '无效的Token ID格式' }, { status: 400 });
     }
 
-    const metadata = await getMetadataById(id);
+    // 使用 getMetadataByTokenId 获取元数据
+    const metadata = await getMetadataByTokenId(id);
 
     if (!metadata) {
       return NextResponse.json({ error: '未找到对应的元数据' }, { status: 404 });
     }
 
+    // 从 metadata 字段中提取 NFT 元数据信息
+    const nftMetadata = metadata.metadata;
+    
+    if (!nftMetadata) {
+      return NextResponse.json({ error: '元数据格式不正确' }, { status: 500 });
+    }
+
     // 构建标准的 NFT 元数据响应
-    const nftMetadata = {
-      name: metadata.name,
-      description: metadata.description,
-      image: metadata.image,
-      external_url: metadata.external_url,
-      attributes: metadata.attributes,
-      background_color: metadata.background_color,
+    const responseData = {
+      name: nftMetadata.name || `Completion Badge`,
+      description: nftMetadata.description || 'NFT completion badge',
+      image: nftMetadata.image,
+      external_url: nftMetadata.external_url,
+      background_color: nftMetadata.background_color || "000000",
+      attributes: metadata.attributes || [], // 使用解析后的 attributes
     };
 
-    return NextResponse.json(nftMetadata, {
+    return NextResponse.json(responseData, {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
