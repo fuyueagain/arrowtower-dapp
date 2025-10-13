@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -33,6 +35,21 @@ interface CheckinProgressProps {
 }
 
 export function CheckinProgress({ result, completedPOIs = [], routeName, totalPOIs }: CheckinProgressProps) {
+  const router = useRouter();
+
+  // 监听 NFT 铸造状态，自动跳转
+  useEffect(() => {
+    // 检查是否完成路线且将要铸造 NFT
+    if (result?.success && result.data?.nftStatus.willMint) {
+      // 延迟 2 秒后跳转，给用户看到成功提示的时间
+      const timer = setTimeout(() => {
+        router.push('/user/checkmint');
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [result, router]);
+
   // 如果没有 result，显示基本的进度卡片
   if (!result) {
     const completed = completedPOIs.length;
@@ -182,11 +199,16 @@ export function CheckinProgress({ result, completedPOIs = [], routeName, totalPO
 
           {/* 下一个打卡点或完成提示 */}
           {isRouteCompleted || willMint ? (
-            <div className="p-4 bg-gradient-to-br from-emerald-100 to-green-100 rounded-lg border-2 border-emerald-300">
+            <div className="p-4 bg-gradient-to-br from-emerald-100 to-green-100 rounded-lg border-2 border-emerald-300 animate-pulse">
               <h4 className="font-bold text-emerald-900 mb-2 text-lg">🎉 恭喜！</h4>
-              <p className="text-base text-emerald-800 font-medium">
+              <p className="text-base text-emerald-800 font-medium mb-2">
                 已完成所有打卡点{willMint && '，NFT 奖励即将发放'}！
               </p>
+              {willMint && (
+                <p className="text-sm text-emerald-700 font-medium animate-bounce">
+                  🚀 即将跳转到 NFT 查询页面...
+                </p>
+              )}
             </div>
           ) : result.data.routeProgress.nextPOI && (
             <div className="p-4 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg border-2 border-yellow-300">
@@ -205,4 +227,3 @@ export function CheckinProgress({ result, completedPOIs = [], routeName, totalPO
     </Card>
   );
 }
-
