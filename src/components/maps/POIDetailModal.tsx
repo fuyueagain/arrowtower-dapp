@@ -3,6 +3,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 export interface POI {
   id: string;
@@ -39,7 +40,18 @@ export function POIDetailModal({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className={isArrowTower ? "max-w-3xl max-h-[90vh] overflow-auto" : "max-w-6xl max-h-[85vh] overflow-auto"}>
+      <DialogContent 
+        className={cn(
+          // 基础样式
+          "overflow-auto",
+          // 移动端优化：确保居中和适配
+          "w-[95vw] sm:w-[90vw]",
+          // 箭塔介绍：较窄的布局
+          isArrowTower && "max-w-3xl max-h-[90vh]",
+          // 其他景点：响应式宽度
+          !isArrowTower && "md:max-w-4xl lg:max-w-5xl xl:max-w-6xl max-h-[85vh]"
+        )}
+      >
         <DialogHeader>
           <DialogTitle className="text-2xl text-emerald-900">
             {poiData ? poiData.name : `景点 ${poiNumber}`}

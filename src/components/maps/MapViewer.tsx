@@ -347,27 +347,42 @@ export function MapViewer({
               />
             </div>
             
-            {/* 图例 */}
-            <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-5 border-2 border-emerald-200 z-20">
-              <h4 className="font-bold text-base mb-3 text-emerald-900">📍 图例</h4>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-blue-400 shadow-md"></div>
-                  <span className="text-emerald-700 font-medium">当前路线待打卡</span>
+            {/* 图例和操作提示 - 响应式布局 */}
+            {/* 移动端：垂直堆叠在左下角 */}
+            {/* 桌面端：分别在左下角和右下角 */}
+            <div className="absolute bottom-4 left-4 right-4 sm:right-auto flex flex-col gap-3 z-20 max-w-[calc(100vw-2rem)] sm:max-w-xs">
+              {/* 图例 */}
+              <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-4 sm:p-5 border-2 border-emerald-200">
+                <h4 className="font-bold text-sm sm:text-base mb-2 sm:mb-3 text-emerald-900">📍 图例</h4>
+                <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-blue-400 shadow-md flex-shrink-0"></div>
+                    <span className="text-emerald-700 font-medium">当前路线待打卡</span>
+                  </div>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-500 shadow-md flex-shrink-0"></div>
+                    <span className="text-emerald-700 font-medium">当前路线已打卡</span>
+                  </div>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gray-300 shadow-md flex-shrink-0"></div>
+                    <span className="text-emerald-700 font-medium">其他景点</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-emerald-500 shadow-md"></div>
-                  <span className="text-emerald-700 font-medium">当前路线已打卡</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-gray-300 shadow-md"></div>
-                  <span className="text-emerald-700 font-medium">其他景点</span>
+              </div>
+
+              {/* 操作提示 - 在移动端显示在图例下方 */}
+              <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-4 sm:p-5 border-2 border-emerald-200 sm:hidden">
+                <div className="space-y-1.5 text-xs text-emerald-700">
+                  <p className="font-bold text-sm text-emerald-900 mb-2">💡 操作提示</p>
+                  <p>• 点击景点文字查看详情</p>
+                  <p>• 使用左侧按钮缩放地图</p>
+                  <p>• 拖动地图查看更多区域</p>
                 </div>
               </div>
             </div>
 
-            {/* 操作提示 */}
-            <div className="absolute bottom-6 right-6 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-5 border-2 border-emerald-200 z-20">
+            {/* 操作提示 - 桌面端在右下角 */}
+            <div className="hidden sm:block absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-5 border-2 border-emerald-200 z-20 max-w-xs">
               <div className="space-y-2 text-sm text-emerald-700">
                 <p className="font-bold text-base text-emerald-900 mb-3">💡 操作提示</p>
                 <p>• 点击景点文字查看详情</p>
