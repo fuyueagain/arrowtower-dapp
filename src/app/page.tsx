@@ -86,7 +86,7 @@ export default function Home() {
   }, [isConnected, address, router, signMessageAsync]);
 
   useEffect(() => {
-    if (status === "authenticated" && isConnected && address && session?.user) {
+    if (/* status === "authenticated" && isConnected && address && */ session?.user) {
       const { role } = session.user;
       
       if (role === "admin") {
@@ -95,7 +95,7 @@ export default function Home() {
         router.push("/user"); 
       }
     }
-  }, [status, router, isConnected, address, session]);
+  }, [/* status, router, isConnected, address,  */session]);
 
   // Render different UI based on authentication state
   const renderAuthContent = () => {

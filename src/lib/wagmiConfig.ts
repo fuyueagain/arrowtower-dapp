@@ -75,4 +75,5 @@ export const config = createConfig({
    // [assetHubWestendTestnet.id]: http(),
     [polkadotHubTestnet.id]: http(),
   },
+  ssr:true
 })

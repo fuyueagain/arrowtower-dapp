@@ -8,7 +8,7 @@ import { passetHub } from './chains/passetHub.ts';
 dotenv.config();
 
 const OWNER_PRIVATE_KEY = process.env.OWNER_PRIVATE_KEY;
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_MINTER_CONTRACT;
 const USER_ADDRESS = process.env.USER_ADDRESS　as `0x${string}`;
 
 const abi = [

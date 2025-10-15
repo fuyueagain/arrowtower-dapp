@@ -11,7 +11,7 @@ dotenv.config();
 
 // ✅ 强制读取环境变量
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_MINTER_CONTRACT;
 
 if (!PRIVATE_KEY) throw new Error('❌ 缺少 PRIVATE_KEY 环境变量');
 if (!CONTRACT_ADDRESS) throw new Error('❌ 缺少 CONTRACT_ADDRESS 环境变量');
