@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <SessionProvider>
           <WalletProvider>
-            <MetadataLayout>
+             <MetadataLayout> 
               {children}
             </MetadataLayout>
           </WalletProvider>
