@@ -122,3 +122,9 @@
 * 开启`wagmiConfig`对`ssr`的支持，减少`connection.connector.getChainId is not a function`错误
 * 在user页面增加钱包断开自动重连三次功能
 
+---
+
+### 2025-10-16
+* 修订`dockerfile`文件，实现可`docker`部署。
+* 新增`schema.postgres.prisma`,实现可生产环境`postgres`部署。
+* 修订部分`readme`文档，增加一张链上图片反馈。

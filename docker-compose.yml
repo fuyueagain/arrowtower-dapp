@@ -28,7 +28,7 @@ services:
     container_name: arrowtower-app
     restart: unless-stopped
     ports:
-      - "30000:3001"
+      - "30000:3000"
     environment:
       # 数据库连接
       DATABASE_URL: ${DATABASE_URL}
@@ -40,6 +40,7 @@ services:
       # Web3 / 区块链配置
       PRIVATE_KEY: ${PRIVATE_KEY}
       NEXT_PUBLIC_MINTER_CONTRACT: ${NEXT_PUBLIC_MINTER_CONTRACT}
+      NEXT_PUBLIC_NFT_ADDRESS: ${NEXT_PUBLIC_NFT_ADDRESS}
       CHAIN_ID: ${CHAIN_ID}
       RPC_URL: ${RPC_URL}
       NETWORK: ${NETWORK}

@@ -33,4 +33,5 @@ ENV NODE_ENV=production
 ENV PORT=3000
 
 # 使用单独的启动脚本避免语法问题
-CMD ["sh", "-c", "echo 'Running database migrations...' && npx prisma migrate deploy && echo 'Running seed data...' && npx tsx prisma/seed.ts && echo 'Starting application...' && npm start"]
+CMD ["sh", "-c", "echo 'Pushing database schema...' && npx prisma db push --schema=prisma/schema.postgres.prisma && echo 'Running seed data...' && npx tsx prisma/initdb.ts && echo 'Starting application...' && npm start"]
+
