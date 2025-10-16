@@ -125,4 +125,6 @@
 ---
 
 ### 2025-10-16
-* 修订`dockerfile`
+* 修订`dockerfile`文件，实现可`docker`部署。
+* 新增`schema.postgres.prisma`,实现可生产环境`postgres`部署。
+* 修订部分`readme`文档，增加一张链上图片反馈。
