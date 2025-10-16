@@ -57,7 +57,7 @@ ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，通过**
 ### 技术栈
 
 **前端**
-- **框架**：Next.js 14+ (App Router)
+- **框架**：Next.js 15+ (App Router)
 - **样式**：Tailwind CSS + shadcn/ui
 - **区块链交互**：wagmi + viem
 - **认证系统**：NextAuth.js
@@ -254,12 +254,7 @@ npm run init:db      # 初始化数据库
 
 项目已部署演示：https://arrowtower.netlify.app/
 
-### Vercel 部署
 
-```bash
-npm install -g vercel
-vercel
-```
 
 ## 🤝 贡献指南
 

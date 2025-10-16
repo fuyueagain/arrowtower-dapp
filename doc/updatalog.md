@@ -122,3 +122,7 @@
 * 开启`wagmiConfig`对`ssr`的支持，减少`connection.connector.getChainId is not a function`错误
 * 在user页面增加钱包断开自动重连三次功能
 
+---
+
+### 2025-10-16
+* 修订`dockerfile`

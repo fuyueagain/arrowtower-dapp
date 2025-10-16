@@ -28,7 +28,7 @@ services:
     container_name: arrowtower-app
     restart: unless-stopped
     ports:
-      - "30000:3001"
+      - "30001:3000"
     environment:
       # 数据库连接
       DATABASE_URL: ${DATABASE_URL}
