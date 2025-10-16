@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// prisma/schema.prisma
+
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String   @id
+  walletAddress  String   @unique
+  walletType     String
+  nickname       String
+  role           String   @default("user")
+  avatar         String
+  totalRoutes    Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  // 添加反向关系
+  checkins       Checkin[] // 一个用户有多个打卡记录
+  vouchers       Voucher[]
+}
+
+
+model Route {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  coverImage    String?
+  difficulty    String   @default("medium")
+  estimatedTime Int
+  poiCount      Int      @default(3)
+  nftCollection String?
+  isActive      Boolean  @default(true)
+
+  pois          POI[]    // 一个路线有多个 POI
+  checkins      Checkin[] // 一个路线有多个打卡记录
+  vouchers      Voucher[]
+}
+
+model POI {
+  id          String   @id @default(cuid()) 
+  routeId     String   
+  route       Route    @relation(fields: [routeId], references: [id])
+  name        String
+  description String?
+  latitude    Float
+  longitude   Float
+  radius      Int      @default(50)
+  taskType    String   @default("photo") 
+  taskContent String?
+  order       Int
+
+  // 添加反向关系
+  checkins    Checkin[] // 一个打卡点有多个打卡记录（不同用户）
+  photos      CheckinPhoto[]
+
+  @@index([routeId])
+  @@map("POI")
+}
+
+model Checkin {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  routeId   String
+  route     Route    @relation(fields: [routeId], references: [id])
+  poiId     String
+  poi       POI      @relation(fields: [poiId], references: [id])
+  signature String
+  message   String
+  taskData  String?
+  status    String   @default("pending") // 'pending' | 'approved' | 'rejected' | 'flagged'
+  createdAt DateTime @default(now())
+
+  latitude   Float?   // 可为空（兼容旧数据）
+  longitude  Float?
+  accuracy   Float?   @default(25.0)  // 单位：米，精度
+
+  photos    CheckinPhoto[]
+
+  @@index([userId])
+  @@index([routeId])
+  @@index([poiId])
+  @@index([userId, routeId]) // 常见查询：某用户在某路线的打卡记录
+  @@map("Checkin")
+}
+
+model CheckinPhoto {
+  id        String   @id @default(cuid())
+  checkinId String
+  checkin   Checkin  @relation(fields: [checkinId], references: [id])
+  poiId     String
+  poi       POI      @relation(fields: [poiId], references: [id])
+  url       String   // 如 "/uploads/checkin_abc_photo.jpg"
+  filename  String
+  size      Int
+  mimeType  String
+  createdAt DateTime @default(now())
+
+  @@index([checkinId])
+  @@index([poiId])
+  @@index([checkinId, poiId])
+  @@map("CheckinPhoto")
+}
+
+// NFT凭证表
+model Voucher {
+  id          String   @id @default(cuid())
+  userId      String
+  routeId     String
+  status      String   @default("pending")
+  nftTokenId  String?
+  mintTxHash  String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  
+  user  User  @relation(fields: [userId], references: [id])
+  route Route @relation(fields: [routeId], references: [id])
+}
+
+
