@@ -217,16 +217,16 @@ export default function CheckMintPage() {
   const parsedAttributes = getParsedAttributes();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 py-4">
-      <div className="max-w-6xl mx-auto px-2 sm:px-4">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 py-4 overflow-x-hidden">
+      <div className="w-full max-w-[100vw] px-4 sm:px-6 md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto">
         {/* 通知栏 */}
         {notification && (
-          <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-2xl border-2 ${
+          <div className={`fixed top-4 left-4 right-4 z-50 p-3 sm:p-4 rounded-lg shadow-2xl border-2 ${
             notification.type === 'success' ? 'bg-emerald-500 border-emerald-600' :
             notification.type === 'error' ? 'bg-red-500 border-red-600' :
             'bg-yellow-500 border-yellow-600'
-          } text-white max-w-md animate-in slide-in-from-top-2 backdrop-blur-sm`}>
-            <p className="font-semibold">{notification.message}</p>
+          } text-white sm:max-w-md sm:left-auto animate-in slide-in-from-top-2 backdrop-blur-sm`}>
+            <p className="font-semibold text-sm sm:text-base">{notification.message}</p>
           </div>
         )}
 
@@ -234,32 +234,43 @@ export default function CheckMintPage() {
         <ArrowTowerHeader />
 
         {/* 页面标题 */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-green-700 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-green-700 mb-2">
             🏆 NFT 铸造查询
           </h1>
-          <p className="text-gray-600 font-medium">查看您的 Arrow Tower NFT 铸造状态</p>
+          <p className="text-sm sm:text-base text-gray-600 font-medium">查看您的 Arrow Tower NFT 铸造状态</p>
+        </div>
+
+        {/* 返回地图按钮 - 固定在顶部，始终显示 */}
+        <div className="mb-6 flex justify-center">
+          <Button
+            onClick={() => router.push('/user')}
+            variant="outline"
+            className="border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-bold shadow-md"
+          >
+            ← 返回地图
+          </Button>
         </div>
 
         {/* 主内容区 */}
-        <div className="max-w-4xl mx-auto">
+        <div className="w-full">
           {/* 检查按钮卡片 */}
           {!mintResult && (
-            <Card className="p-8 bg-white/90 backdrop-blur-sm shadow-xl border-2 border-emerald-200 mb-6">
+            <Card className="p-4 sm:p-8 bg-white/90 backdrop-blur-sm shadow-xl border-2 border-emerald-200 mb-6">
               <div className="text-center">
                 <div className="w-24 h-24 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                   <Trophy className="w-12 h-12 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-emerald-900 mb-3">
+                <h2 className="text-xl sm:text-2xl font-bold text-emerald-900 mb-3">
                   检查您的 NFT 铸造状态
                 </h2>
-                <p className="text-gray-600 mb-6">
+                <p className="text-sm sm:text-base text-gray-600 mb-6">
                   完成路线打卡后，系统将自动为您铸造专属 NFT
                 </p>
                 <Button
                   onClick={checkMintStatus}
                   disabled={isChecking || !isConnected}
-                  className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold py-6 px-12 rounded-xl text-lg shadow-lg transition-all"
+                  className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold py-4 px-8 sm:py-6 sm:px-12 rounded-xl text-base sm:text-lg shadow-lg transition-all"
                 >
                   {isChecking ? (
                     <div className="flex items-center gap-3">
@@ -306,15 +317,15 @@ export default function CheckMintPage() {
           {mintResult?.success && mintResult.nftTokenId && (
             <Card className="overflow-hidden bg-white shadow-2xl border-2 border-emerald-300">
               {/* 成功横幅 */}
-              <div className="bg-gradient-to-r from-emerald-500 to-green-500 p-6 text-white text-center">
-                <CheckCircle2 className="w-16 h-16 mx-auto mb-3" />
-                <h2 className="text-3xl font-bold mb-2">铸造成功！🎉</h2>
-                <p className="text-emerald-100">恭喜您获得专属 Arrow Tower NFT</p>
+              <div className="bg-gradient-to-r from-emerald-500 to-green-500 p-4 sm:p-6 text-white text-center">
+                <CheckCircle2 className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-3" />
+                <h2 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">铸造成功！🎉</h2>
+                <p className="text-sm sm:text-base text-emerald-100">恭喜您获得专属 Arrow Tower NFT</p>
               </div>
 
               {/* NFT 内容 */}
-              <div className="p-8">
-                <div className="grid md:grid-cols-2 gap-8">
+              <div className="p-4 sm:p-6 md:p-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
                   {/* 左侧：NFT 图片 */}
                   <div className="space-y-4">
                     {parsedMetadata.image && (
@@ -328,10 +339,10 @@ export default function CheckMintPage() {
                     )}
 
                     {/* 操作按钮 */}
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                       <Button
                         onClick={addNFTToWallet}
-                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-lg"
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-lg text-sm sm:text-base"
                       >
                         <Download className="w-4 h-4 mr-2" />
                         导入钱包
@@ -339,7 +350,7 @@ export default function CheckMintPage() {
                       <Button
                         onClick={viewOnBlockscout}
                         variant="outline"
-                        className="flex-1 border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-bold"
+                        className="flex-1 border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-bold text-sm sm:text-base"
                       >
                         <ExternalLink className="w-4 h-4 mr-2" />
                         区块链浏览器
@@ -348,9 +359,9 @@ export default function CheckMintPage() {
                   </div>
 
                   {/* 右侧：NFT 信息 */}
-                  <div className="space-y-6">
+                  <div className="space-y-4 sm:space-y-6">
                     <div>
-                      <h3 className="text-2xl font-bold text-emerald-900 mb-2">
+                      <h3 className="text-xl sm:text-2xl font-bold text-emerald-900 mb-2">
                         {parsedMetadata.name || 'Arrow Tower NFT'}
                       </h3>
                       {parsedMetadata.route?.name && (
@@ -362,26 +373,26 @@ export default function CheckMintPage() {
 
                     {parsedMetadata.description && (
                       <div>
-                        <h4 className="font-semibold text-gray-700 mb-2">描述</h4>
-                        <p className="text-gray-600 leading-relaxed">
+                        <h4 className="font-semibold text-gray-700 mb-1 sm:mb-2 text-sm sm:text-base">描述</h4>
+                        <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
                           {parsedMetadata.description}
                         </p>
                       </div>
                     )}
 
                     {/* Token ID */}
-                    <div className="bg-emerald-50 rounded-lg p-4 border-2 border-emerald-200">
-                      <h4 className="font-semibold text-emerald-900 mb-2">Token ID</h4>
-                      <p className="text-emerald-700 font-mono text-lg font-bold">
+                    <div className="bg-emerald-50 rounded-lg p-3 sm:p-4 border-2 border-emerald-200">
+                      <h4 className="font-semibold text-emerald-900 mb-1 sm:mb-2 text-sm sm:text-base">Token ID</h4>
+                      <p className="text-emerald-700 font-mono text-base sm:text-lg font-bold">
                         #{mintResult.nftTokenId}
                       </p>
                     </div>
 
                     {/* 合约地址 */}
-                    <div className="bg-gray-50 rounded-lg p-4 border-2 border-gray-200">
-                      <h4 className="font-semibold text-gray-700 mb-2">合约地址</h4>
-                      <div className="flex items-center gap-2">
-                        <p className="text-gray-600 font-mono text-sm break-all">
+                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4 border-2 border-gray-200">
+                      <h4 className="font-semibold text-gray-700 mb-1 sm:mb-2 text-sm sm:text-base">合约地址</h4>
+                      <div className="flex items-start gap-2">
+                        <p className="text-gray-600 font-mono text-xs break-all flex-1">
                           {NFT_CONTRACT_ADDRESS}
                         </p>
                         <Button
@@ -401,21 +412,34 @@ export default function CheckMintPage() {
                     {/* 属性列表 */}
                     {parsedAttributes.length > 0 && (
                       <div>
-                        <h4 className="font-semibold text-gray-700 mb-3">属性</h4>
-                        <div className="grid grid-cols-2 gap-3">
-                          {parsedAttributes.map((attr, index) => (
-                            <div
-                              key={index}
-                              className="bg-white border-2 border-emerald-100 rounded-lg p-3 text-center"
-                            >
-                              <p className="text-xs text-gray-500 mb-1">
-                                {attr.trait_type}
-                              </p>
-                              <p className="font-bold text-emerald-900">
-                                {attr.value}
-                              </p>
-                            </div>
-                          ))}
+                        <h4 className="font-semibold text-gray-700 mb-2 sm:mb-3 text-sm sm:text-base">属性</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                          {parsedAttributes.map((attr, index) => {
+                            // 检查是否是钱包地址（长文本）
+                            const isLongText = String(attr.value).length > 20;
+                            const isWalletAddress = attr.trait_type.toLowerCase().includes('wallet') || 
+                                                   attr.trait_type.toLowerCase().includes('address');
+                            
+                            return (
+                              <div
+                                key={index}
+                                className={`bg-white border-2 border-emerald-100 rounded-lg p-2 sm:p-3 ${
+                                  isLongText || isWalletAddress ? 'sm:col-span-2' : ''
+                                }`}
+                              >
+                                <p className="text-xs text-gray-500 mb-1 text-center">
+                                  {attr.trait_type}
+                                </p>
+                                <p className={`font-bold text-emerald-900 ${
+                                  isWalletAddress ? 'font-mono text-xs break-all text-center' : 
+                                  isLongText ? 'text-xs sm:text-sm break-words text-center' : 
+                                  'text-sm text-center'
+                                }`}>
+                                  {attr.value}
+                                </p>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     )}
@@ -423,21 +447,10 @@ export default function CheckMintPage() {
                 </div>
 
                 {/* 底部提示 */}
-                <div className="mt-8 p-4 bg-emerald-50 rounded-lg border-2 border-emerald-200">
-                  <p className="text-sm text-emerald-800 text-center">
+                <div className="mt-4 sm:mt-6 md:mt-8 p-3 sm:p-4 bg-emerald-50 rounded-lg border-2 border-emerald-200">
+                  <p className="text-xs sm:text-sm text-emerald-800 text-center">
                     💡 您可以在区块链浏览器中查看 NFT 的详细信息和交易记录
                   </p>
-                </div>
-
-                {/* 返回按钮 */}
-                <div className="mt-6 text-center">
-                  <Button
-                    onClick={() => router.push('/user')}
-                    variant="outline"
-                    className="border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-bold"
-                  >
-                    返回地图继续探索
-                  </Button>
                 </div>
               </div>
             </Card>
