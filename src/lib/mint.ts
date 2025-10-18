@@ -232,7 +232,7 @@ async function main() {
 
 // ✅ ✅ ESM 安全的 "if require.main === module"
 // 只有当直接运行此文件时才执行 main()
-/* if (import.meta.url === `file://${process.argv[1]}`) */ {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((error) => {
     console.error('❌ 未捕获异常:', error);
     process.exit(1);
