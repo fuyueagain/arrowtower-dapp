@@ -128,3 +128,18 @@
 * 修订`dockerfile`文件，实现可`docker`部署。
 * 新增`schema.postgres.prisma`,实现可生产环境`postgres`部署。
 * 修订部分`readme`文档，增加一张链上图片反馈。
+
+
+---
+
+### 2025-10-17
+* 修复`/src/lib/mint.rs`不能稳定获取`nfttokenId`问题。将`NFTMinted`事件手动解析改为通过`abi`进行手动解析，并添加`Transfer`事件作为备用事件来协助解析`nfttokenId`。
+* 尝试使用`brave`浏览器来连接钱包（针对手机端优化）。目前桌面端无问题，手机端还是无法稳定链接（在其他分支修改）。
+
+
+---
+
+### 2025-10-18
+* 修复`mint-processor.ts`中`metadata`数据获取`Completion Status`为`pending`问题
+* 在`/src/app/user/page.tsx`中，新增一个`前往NFT查询`按钮（`router.push('/user/checkmint')`）
+* 修复`mint.ts`中未注释`if (import.meta.url === 'file://${process.argv[1]}') `引起环境无法构建问题

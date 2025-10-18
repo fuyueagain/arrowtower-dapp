@@ -43,6 +43,11 @@ async function generateVoucherMetadata(voucherId: string,nfttokenid:string) {
       throw new Error('Voucher not found');
     }
 
+    console.log("voucherId:",voucherId);
+    console.log("nfttokenid:",nfttokenid);
+    console.log('-----------');
+    console.log("result:",result);
+
     const { user, route } = result;
 
     // 查询该用户在该路线上的所有打卡记录（Checkin），并获取对应的 POI 信息
@@ -90,7 +95,7 @@ async function generateVoucherMetadata(voucherId: string,nfttokenid:string) {
         },
         {
           trait_type: "Completion Status",
-          value: result.status,
+          value: "Completed",
         },
         {
           trait_type: "POIs Visited",
