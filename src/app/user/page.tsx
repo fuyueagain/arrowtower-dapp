@@ -13,6 +13,7 @@ import { ArrowTowerHeader } from '@/components/maps/ArrowTowerHeader';
 import { RouteSelector } from '@/components/maps/RouteSelector';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 // 类型定义
 interface Route {
@@ -360,6 +361,18 @@ export default function UserPage() {
             />
           </div>
         )}
+
+        {/* 前往查询NFT按钮 */}
+        <div className="mt-6 text-center">
+          <Button
+            onClick={() => router.push('/user/checkmint')}
+            variant="outline"
+            className="border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-bold"
+          >
+            前往查询NFT
+          </Button>
+        </div>
+        
 
         {/* POI 详情对话框 */}
         {selectedPOI && (
