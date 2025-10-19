@@ -3,13 +3,11 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [main, dev]
-    paths-ignore:  # 这些文件变更不触发部署
+    paths-ignore:
       - '**.md'
       - 'docs/**'
       - '.gitignore'
       - 'LICENSE'
-  pull_request:
-    branches: [main, dev]
 
 env:
   NODE_VERSION: '20'
@@ -40,45 +38,30 @@ jobs:
     runs-on: ubuntu-latest
     needs: changes
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Generate Prisma Client
-        run: npx prisma generate
-
-      - name: Lint check
-        run: npm run lint
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run lint
+        continue-on-error: true
+      - run: npx tsc --noEmit
+        continue-on-error: true
+      - run: npm test --if-present
         continue-on-error: true
 
-      - name: Type check
-        run: npx tsc --noEmit
-        continue-on-error: true
-
-      - name: Run tests
-        run: npm test --if-present
-        continue-on-error: true
-
-  # 部署到 Coolify
   deploy:
     runs-on: ubuntu-latest
     needs: [changes, quality-check]
-    # 只在 main 分支 + push 事件 + 有代码变更时部署
     if: |
-      github.ref == 'refs/heads/main' && 
-      github.event_name == 'push' && 
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
       needs.changes.outputs.should_deploy == 'true'
     steps:
-      - name: Deploy to Coolify
-        id: deploy
+      - name: Trigger Coolify webhook
         run: |
           response=$(curl --request GET '${{ secrets.COOLIFY_WEBHOOK_URL }}' \
             --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}' \
@@ -88,27 +71,6 @@ jobs:
           
           if [ "$response" -eq 200 ] || [ "$response" -eq 201 ]; then
             echo "✅ Deployment webhook triggered successfully"
-            echo "status=success" >> $GITHUB_OUTPUT
           else
             echo "❌ Deployment webhook failed with status: $response"
-            echo "status=failed" >> $GITHUB_OUTPUT
             exit 1
-          fi
-      
-      - name: Comment on commit
-        if: always()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const status = '${{ steps.deploy.outputs.status }}';
-            const emoji = status === 'success' ? '✅' : '❌';
-            const message = status === 'success' 
-              ? 'Deployment triggered successfully' 
-              : 'Deployment failed';
-            
-            github.rest.repos.createCommitComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: context.sha,
-              body: `${emoji} ${message}\n\nCommit: ${context.sha.substring(0, 7)}\nBranch: ${context.ref.replace('refs/heads/', '')}`
-            })
