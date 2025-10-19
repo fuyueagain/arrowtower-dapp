@@ -21,7 +21,7 @@ model User {
   walletType     String
   nickname       String
   role           String   @default("user")
-  avatar         String
+  avatar         String?
   totalRoutes    Int      @default(0)
   createdAt      DateTime @default(now())
 
