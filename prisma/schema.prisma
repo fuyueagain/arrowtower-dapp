@@ -21,7 +21,7 @@ model User {
   walletType     String
   nickname       String
   role           String   @default("user")
-  avatar         String
+  avatar         String?
   totalRoutes    Int      @default(0)
   createdAt      DateTime @default(now())
 
@@ -124,8 +124,8 @@ model Voucher {
   metadata    Json?
   createdAt   DateTime @default(now())
   
-  user  User  @relation(fields: [userId], references: [id])
-  route Route @relation(fields: [routeId], references: [id])
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
 }
 
 
