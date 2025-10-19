@@ -5,7 +5,7 @@ jest.mock('../src/lib/db/prisma', () => {
   const { PrismaClient } = require('@prisma/client');
 
   const prisma = new PrismaClient({
-    datasourceUrl: 'file:../data/arrowtower.db', // 确保路径正确
+    datasourceUrl: 'file:../data/arrowtower_test.db', // 确保路径正确
   });
 
   return { prisma };
@@ -23,7 +23,7 @@ import {
 async function clearDatabase() {
   const { PrismaClient } = require('@prisma/client');
   const prisma = new PrismaClient({
-    datasourceUrl: 'file:../data/arrowtower.db',
+    datasourceUrl: 'file:../data/arrowtower_test.db',
   });
   try {
     await prisma.$executeRaw `PRAGMA foreign_keys = OFF`;
@@ -54,7 +54,7 @@ describe('UserService CRUD Tests', () => {
     // 断开 mock 中使用的 prisma 连接
     const { PrismaClient } = require('@prisma/client');
     const prisma = new PrismaClient({
-      datasourceUrl: 'file:../data/arrowtower.db',
+      datasourceUrl: 'file:../data/arrowtower_test.db',
     });
     await prisma.$disconnect();
   });
