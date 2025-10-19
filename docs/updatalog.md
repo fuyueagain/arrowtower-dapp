@@ -143,3 +143,13 @@
 * 修复`mint-processor.ts`中`metadata`数据获取`Completion Status`为`pending`问题
 * 在`/src/app/user/page.tsx`中，新增一个`前往NFT查询`按钮（`router.push('/user/checkmint')`）
 * 修复`mint.ts`中未注释`if (import.meta.url === 'file://${process.argv[1]}') `引起环境无法构建问题
+
+---
+
+### 2025-10-19
+* 完成初期演示视频录制（目前尚未添加入路径）
+* 增加`/lib/db/userService.ts`,`/app/api/admin/users/route.ts`,实现管理员针对`user`用户管理接口,同时利用`jest`实现对数据库函数单元测试。
+* 增加`/src/components/admin/AdminModal.tsx`,`src\components\admin\AdminTable.tsx`,`src\components\admin\ChainStats.tsx`三个组件。实现管理后台组件模板化。
+* 增加`src\app\admin\page.tsx`，完善后台`admin`管理页面，等待其他接口。
+* 调整`CI/CD`功能
+* 完成`ppt`草稿内容。
