@@ -1,23 +1,9 @@
-// jest.config.ts
-import type { Config } from 'jest';
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+// jest.config.cjs
+const { resolve } = require('path');
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-const config: Config = {
-  preset: 'ts-jest/presets/default-esm',
+module.exports = {
+  preset: 'ts-jest',
   testEnvironment: 'node',
-
-  // 识别为 ESM 的 ts 文件
-  extensionsToTreatAsEsm: ['.ts'],
-
-  globals: {
-    'ts-jest': {
-      useESM: true,
-      tsconfig: './tsconfig.json', // 可选：指定 tsconfig
-    },
-  },
 
   testMatch: [
     '<rootDir>/tests/**/*.test.ts',
@@ -43,8 +29,7 @@ const config: Config = {
     'jest.config.ts',
   ],
 
+  // CommonJS 下 __dirname 可直接用，所以不用额外处理
   rootDir: resolve(__dirname, '.'),
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };
-
-export default config;
