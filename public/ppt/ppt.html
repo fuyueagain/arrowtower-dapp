@@ -292,6 +292,38 @@
         .fade-in {
             animation: fadeIn 0.8s ease forwards;
         }
+        
+        /* 新增：合作伙伴logo样式 */
+        .partners-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .partner-logo {
+            height: 80px;
+            width: auto;
+            max-width: 180px;
+            object-fit: contain;
+            filter: grayscale(20%);
+            transition: all 0.3s ease;
+        }
+        
+        .partner-logo:hover {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+        
+        /* 鸣谢标题样式 */
+        .acknowledgement-title {
+            font-size: 2.5rem;
+            color: #065f46;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -337,7 +369,7 @@
     <section class="slide" id="slide3">
         <div class="slide-content fade-in">
             <h2>项目演示</h2>
-            <div class="center-image small-image">
+            <div class="center-image">
                 <img src="/ppt/group.svg" alt="箭塔村地图">
             </div>
             <p>体验箭塔村特色旅游路线，完成打卡获取 NFT 纪念品</p>
@@ -463,7 +495,7 @@
                     
                     <!-- 数据持久层 -->
                     <rect x="250" y="290" width="300" height="50" fill="#6ee7b7" stroke="#10b981" stroke-width="1"/>
-                    <text x="400" y="320" text-anchor="middle" fill="#065f46" font-weight="bold">数据持久层 (Prisma + Database)</text>
+                    <text x="400" y="320" text-anchor="middle" fill="#065f46" font-weight="bold">数据持久层 (Prisma + Database + blockchain)</text>
                     <text x="400" y="340" text-anchor="middle" fill="#374151" font-size="14">用户数据 | 打卡记录 | 任务进度</text>
                 </svg>
             </div>
@@ -516,9 +548,13 @@
     <!-- 致谢页 -->
     <section class="slide" id="slide10">
         <div class="slide-content fade-in">
-            <h2>感谢观看</h2>
-            <div class="center-image small-image">
-                <img src="/ppt/wlogo.jpg" alt="致谢">
+            <h2 class="acknowledgement-title">感谢大家观看</h2>
+            <h2 class="acknowledgement-title">鸣谢</h2>
+            <div class="partners-container">
+                <img src="/ppt/polkadotlogo.png" alt="Polkadot" class="partner-logo">
+                <img src="/ppt/papermoon.png" alt="Papermoon" class="partner-logo">
+                <img src="/ppt/oneblock.jpg" alt="OneBlock" class="partner-logo">
+                <img src="/ppt/wlogo.jpg" alt="W Logo" class="partner-logo">
             </div>
             <p>感谢 Polkadot 生态对 Web3 基础设施的支持</p>
             <p>感谢所有为本项目做出贡献的开发者和社区成员！</p>
