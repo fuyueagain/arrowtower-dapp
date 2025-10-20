@@ -55,6 +55,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    environment: delpoy
     needs: [changes, quality-check]
     if: |
       github.ref == 'refs/heads/main' &&
