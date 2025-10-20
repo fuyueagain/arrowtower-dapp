@@ -142,7 +142,7 @@ export async function getUserByWalletAddress(
 export async function getUsers(
   page = 1,
   pageSize = 10
-): Promise<OperationResult<{ users: UserResponse[]; total: number }>> {
+): Promise<OperationResult<{ users: UserResponse[] }>> {
   try {
     const skip = (page - 1) * pageSize;
 
@@ -155,13 +155,16 @@ export async function getUsers(
       prisma.user.count(),
     ]);
 
+    // 这里我们返回一个标准化结构（便于路由层或调用方直接使用）
     return {
       success: true,
       data: {
         users,
-        total,
       },
-    };
+      total,
+      page,
+      pageSize,
+    } as any;
   } catch (error) {
     console.error('查询用户列表失败:', error);
     return {
@@ -170,7 +173,6 @@ export async function getUsers(
     };
   }
 }
-
 /**
  * 更新用户信息
  */
