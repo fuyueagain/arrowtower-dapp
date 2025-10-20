@@ -2,8 +2,11 @@ import { HardhatUserConfig } from "hardhat/config"
 import "@nomicfoundation/hardhat-toolbox"
 import "@parity/hardhat-polkadot"
 
+const PRIVATE_KEY_LOCAL = process.env.PRIVATE_KEY_LOCAL || ""
+const PRIVATE_KEY_PA = process.env.PRIVATE_KEY_PA || ""
+
 const config: HardhatUserConfig = {
-    solidity: "0.8.26",
+    solidity: "0.8.28",
     resolc: {
         compilerSource: "npm",
         settings: {
@@ -11,7 +14,8 @@ const config: HardhatUserConfig = {
                 enabled: true,
                 parameters: 'z',
                 fallbackOz: true,
-                runs: 200,
+                runs:200
+                
             }
         },
     },
@@ -31,7 +35,13 @@ const config: HardhatUserConfig = {
         localNode: {
         polkavm: true,
         url: `http://127.0.0.1:8545`,
+        accounts:[PRIVATE_KEY_LOCAL]
       },
+      passethub:{
+        polkavm: true,
+        url: `https://testnet-passet-hub-eth-rpc.polkadot.io`,
+        accounts:[PRIVATE_KEY_PA]
+      }
     },
 }
 

@@ -153,3 +153,8 @@
 * 增加`src\app\admin\page.tsx`，完善后台`admin`管理页面，等待其他接口。
 * 调整`CI/CD`功能
 * 完成`ppt`草稿内容。
+
+### 2025-10-20
+* 修订`ppt`头像大小写问题，更改团队English名称一个大写问题
+* 完成自动delpoy的密钥设置
+* 增加`readme`里面contractsd的部署测试命令，修定增加`prisma`初始化命令。

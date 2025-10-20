@@ -1,6 +1,9 @@
 # ArrowTower
 
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/easyshellworld/arrowtower-dapp/blob/main/LICENSE) [![Next.js](https://img.shields.io/badge/Next.js-15+-black?logo=next.js)](https://nextjs.org/) [![Polkadot](https://img.shields.io/badge/Polkadot-Hub_Testnet-E6007A?logo=polkadot)](https://polkadot.network/) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/easyshellworld/arrowtower-dapp/pulls) [![Live Demo](https://img.shields.io/badge/demo-live-success)](https://arrowtower.netlify.app/)
+
 ![Snapshot](./pic/Snapshot.PNG)
+
 ## 📖 项目简介
 
 ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，通过**零 Gas 费**后端代铸造技术，让用户无门槛体验 Web3。首期聚焦箭塔村乡村旅游场景，游客完成特色路线打卡和互动任务后，系统自动发放独特 NFT 数字纪念品，无需用户了解Gas费或支付费用，学习钱包使用与签名。
@@ -115,22 +118,63 @@ ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，通过**
 
 ### 安装步骤
 
-1. **克隆项目**
+#### 1. 克隆项目
 
 ```bash
 git clone https://github.com/easyshellworld/arrowtower-dapp.git
 cd arrowtower-dapp
 ```
 
-2. **安装依赖**
+#### 2. 智能合约部署与测试
+
+**2.1 进入合约目录并安装依赖**
+
+```bash
+cd contracts/hardhat-arrowtower
+npm install
+```
+
+**2.2 配置合约环境变量**
+
+创建 `.env` 文件并配置以下内容：
+
+```env
+# 本地网络私钥示例
+PRIVATE_KEY_LOCAL="0x...."
+
+# passethub (测试网) 私钥
+PRIVATE_KEY_PA="0x...."
+```
+
+**2.3 部署与测试合约**
+
+```bash
+# 本地网络部署与测试
+npx hardhat run scripts/deploy.ts --network localNode
+npx hardhat run scripts/deployandtest.ts --network localNode
+
+# 使用 passet-hub 测试网部署与测试
+npx hardhat run scripts/deploy.ts --network passethub
+npx hardhat run scripts/deployandtest.ts --network passethub
+```
+
+**2.4 返回项目根目录**
+
+```bash
+cd ../..
+```
+
+#### 3. dApp 应用安装与配置
+
+**3.1 安装依赖**
 
 ```bash
 npm install
 ```
 
-3. **配置环境变量**
+**3.2 配置应用环境变量**
 
-创建 `.env.local` 文件并配置必要的环境变量：
+创建 `.env.local` 与 `.env` 文件并配置以下内容：
 
 ```env
 # 数据库配置
@@ -152,19 +196,21 @@ NEXT_PUBLIC_NFT_CONTRACT="0x9373197B94f4633FBc121532F3cF3948FD4a5a15"
 MINTER_PRIVATE_KEY="your_private_key"
 ```
 
-4. **初始化数据库**
+**3.3 初始化数据库**
 
 ```bash
+npx prisma generate
+npx prisma db push
 npm run init:db
 ```
 
-5. **启动开发服务器**
+**3.4 启动开发服务器**
 
 ```bash
 npm run dev
 ```
 
-6. **访问应用**
+**3.5 访问应用**
 
 打开浏览器访问 [http://localhost:3000](http://localhost:3000)
 
@@ -231,8 +277,6 @@ arrowtower-dapp/
     ├─tailwind.config.js
     ├─postcss.config.js
     └─components.json          # shadcn/ui 配置
-
-
 ```
 
 ## 🔑 核心功能模块
@@ -290,8 +334,6 @@ npm run init:db      # 初始化数据库
 4. 点击部署
 
 项目已部署演示：https://arrowtower.netlify.app/
-
-
 
 ## 🤝 贡献指南
 
