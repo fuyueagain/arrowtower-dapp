@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { config } from 'dotenv'
+ import { config } from 'dotenv'
 import { existsSync } from 'fs'
 
 // 按Next.js优先级加载环境变量
@@ -7,12 +7,12 @@ if (existsSync('.env.local')) {
   config({ path: '.env.local' })
 } else {
   config({ path: '.env' })
-}
+} 
 
 const prisma = new PrismaClient()
 
 async function main() {
-       console.log('🌱 清空原来数据库...')
+/*        console.log('🌱 清空原来数据库...')
 
   // 清空现有数据
   await prisma.voucher.deleteMany()
@@ -21,7 +21,7 @@ async function main() {
   await prisma.checkinPhoto.deleteMany()
   await prisma.route.deleteMany()
   await prisma.user.deleteMany()
-
+ */
   
   
   
