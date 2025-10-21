@@ -6,17 +6,18 @@ import { getUsers } from "@/lib/db/userService";
 import { createUser } from "@/lib/db/userService"; 
 
 export async function GET(request: Request) {
-
-
   const { searchParams } = new URL(request.url);
-  const page = parseInt(searchParams.get("page") || "1");
-  const pageSize = parseInt(searchParams.get("pageSize") || "10");
+  const pageParam = searchParams.get("page");
+  const pageSizeParam = searchParams.get("pageSize");
+  const page = Number.isFinite(Number(pageParam)) && Number(pageParam) > 0 ? Number(pageParam) : 1;
+  const pageSize = Number.isFinite(Number(pageSizeParam)) && Number(pageSizeParam) > 0 ? Number(pageSizeParam) : 10;
 
-  return NextResponse.json(await getUsers(page, pageSize));
+  const result = await getUsers(page, pageSize);
+  return NextResponse.json(result);
 }
 
 export async function POST(request: Request) {
-
   const data = await request.json();
-  return NextResponse.json(await createUser(data));
+  const result = await createUser(data);
+  return NextResponse.json(result);
 }
