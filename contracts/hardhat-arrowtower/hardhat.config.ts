@@ -1,6 +1,9 @@
 import { HardhatUserConfig } from "hardhat/config"
 import "@nomicfoundation/hardhat-toolbox"
 import "@parity/hardhat-polkadot"
+import { config as dotenvConfig } from "dotenv" 
+dotenvConfig() 
+
 
 const PRIVATE_KEY_LOCAL = process.env.PRIVATE_KEY_LOCAL || ""
 const PRIVATE_KEY_PA = process.env.PRIVATE_KEY_PA || ""
