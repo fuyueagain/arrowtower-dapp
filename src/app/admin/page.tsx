@@ -7,11 +7,12 @@ import { ArrowTowerHeader } from '@/components/maps/ArrowTowerHeader';
 import { AdminTable } from '@/components/admin/AdminTable';
 import { AdminModal } from '@/components/admin/AdminModal';
 import { ChainStats } from '@/components/admin/ChainStats';
+import { QRBulkGenerator } from '@/components/admin/QRBulkGenerator';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-type TabType = 'chain' | 'users' | 'routes' | 'pois' | 'checkins' | 'vouchers';
+type TabType = 'chain' | 'users' | 'routes' | 'pois' | 'checkins' | 'vouchers' | 'qr_bulk';
 
 interface User {
   id: string;
@@ -99,7 +100,7 @@ export default function AdminDashboard() {
 
   // 加载数据
   const fetchData = async (type: TabType) => {
-    if (type === 'chain') return; // 链上数据由组件自己处理
+    if (type === 'chain' || type === 'qr_bulk') return; // 这些标签页有自己的数据处理逻辑
     
     setLoading(true);
     setError(null);
@@ -107,6 +108,7 @@ export default function AdminDashboard() {
     try {
       const endpoints: Record<TabType, string> = {
         chain: '',
+        qr_bulk: '',
         users: '/api/admin/users',
         routes: '/api/admin/routes',
         pois: '/api/admin/pois',
@@ -158,6 +160,7 @@ export default function AdminDashboard() {
     
     const defaults: Record<TabType, any> = {
       chain: {},
+      qr_bulk: {},
       users: {
         id: crypto.randomUUID(),
         walletAddress: '',
@@ -202,11 +205,12 @@ export default function AdminDashboard() {
 
   // 删除
   const handleDelete = async (item: any) => {
-    if (!confirm('确定要删除吗？此操作不可恢复！')) return;
+    if (!confirm('确定要删除吗?此操作不可恢复!')) return;
     
     try {
       const endpoints: Record<TabType, string> = {
         chain: '',
+        qr_bulk: '',
         users: `/api/admin/users/${item.id}`,
         routes: `/api/admin/routes/${item.id}`,
         pois: `/api/admin/pois/${item.id}`,
@@ -235,6 +239,7 @@ export default function AdminDashboard() {
     try {
       const endpoints: Record<TabType, string> = {
         chain: '',
+        qr_bulk: '',
         users: modalType === 'create' ? '/api/admin/users' : `/api/admin/users/${currentId}`,
         routes: modalType === 'create' ? '/api/admin/routes' : `/api/admin/routes/${currentId}`,
         pois: modalType === 'create' ? '/api/admin/pois' : `/api/admin/pois/${currentId}`,
@@ -269,6 +274,7 @@ export default function AdminDashboard() {
   const getModalFields = () => {
     const fieldsMap: Record<TabType, any[]> = {
       chain: [],
+      qr_bulk: [],
       users: [
         { name: 'id', label: '用户ID', type: 'text', required: true, disabled: modalType === 'update' },
         { name: 'walletAddress', label: '钱包地址', type: 'text', required: true, disabled: modalType === 'update' },
@@ -336,6 +342,7 @@ export default function AdminDashboard() {
   const getTableColumns = () => {
     const columnsMap: Record<TabType, any[]> = {
       chain: [],
+      qr_bulk: [],
       users: [
         { key: 'avatar', label: '头像', render: (val: string) => (
           <img src={val || '/default-avatar.png'} alt="avatar" className="w-10 h-10 rounded-full border-2 border-emerald-200" />
@@ -423,6 +430,7 @@ export default function AdminDashboard() {
     { id: 'users', label: '用户管理', icon: '👥' },
     { id: 'routes', label: '路线管理', icon: '🗺️' },
     { id: 'pois', label: '打卡点管理', icon: '📍' },
+    { id: 'qr_bulk', label: '打卡点二维码', icon: '🔳' },
     { id: 'checkins', label: '打卡记录', icon: '✅' },
     { id: 'vouchers', label: 'NFT凭证', icon: '🎨' }
   ];
@@ -456,8 +464,15 @@ export default function AdminDashboard() {
         {/* 内容区域 */}
         {activeTab === 'chain' ? (
           <ChainStats />
+        ) : activeTab === 'qr_bulk' ? (
+          <QRBulkGenerator
+            pois={pois}
+            loading={loading}
+            error={error}
+            onRefresh={() => fetchData('pois')}
+          />
         ) : (
-          <AdminTable
+          <AdminTable<User | Route | POI | Checkin | Voucher>
             title={tabs.find(t => t.id === activeTab)?.label || ''}
             icon={tabs.find(t => t.id === activeTab)?.icon || ''}
             data={
@@ -482,6 +497,7 @@ export default function AdminDashboard() {
             onDelete={handleDelete}
             onRefresh={() => fetchData(activeTab)}
             addButtonText="新增"
+            showQRButton={activeTab === 'pois'}
           />
         )}
 

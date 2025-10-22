@@ -174,7 +174,7 @@ npm install
 
 **3.2 配置应用环境变量**
 
-创建 `.env.local` 与 `.env` 文件并配置以下内容：
+创建 `.env` 文件并配置以下内容：
 
 ```env
 # 数据库配置
@@ -184,16 +184,15 @@ DATABASE_URL="your_database_url"
 NEXTAUTH_SECRET="your_nextauth_secret"
 NEXTAUTH_URL="http://localhost:3000"
 
-# Polkadot Hub Testnet 配置
-NEXT_PUBLIC_CHAIN_ID="polkadot-hub-testnet"
-NEXT_PUBLIC_RPC_URL="your_rpc_url"
+# 配置网站基本链接
+NEXT_PUBLIC_ARROW_TOWER_BASE_URL="https://arrowtower.netlify.app/"
 
 # 智能合约地址
 NEXT_PUBLIC_MINTER_CONTRACT="0x079098fb8e901DE45AB510fA669bdE793DfEBD50"
 NEXT_PUBLIC_NFT_CONTRACT="0x9373197B94f4633FBc121532F3cF3948FD4a5a15"
 
 # 后端铸造私钥（仅服务端）
-MINTER_PRIVATE_KEY="your_private_key"
+PRIVATE_KEY="your_private_key"
 ```
 
 **3.3 初始化数据库**
