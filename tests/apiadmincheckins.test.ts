@@ -1,4 +1,20 @@
-// /tests/apiadmincheckins.test.ts
+// /tests/apiadmincheckins.test.ts (修复版)
+
+/**
+ * 修复要点：
+ * 1. 全局抑制 console.error（测试的错误分支通常会触发路由的 catch 并打印错误，抑制能让测试输出更干净）。
+ * 2. 在 mock 之后再导入被测路由，确保被测代码使用的是 mock 的 prisma 与 session。
+ * 3. 统一把 route handler 的第二个参数 params 传为 { params: { id } }，更贴合 Next.js 实际调用方式。
+ * 4. 每个测试前使用 jest.clearAllMocks()，避免 mock 相互影响。
+ */
+
+// 全局抑制 console.error
+beforeAll(() => {
+  jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+afterAll(() => {
+  (console.error as unknown as jest.Mock).mockRestore();
+});
 
 // 1) Mock next/server 的 NextResponse
 jest.mock('next/server', () => ({
@@ -43,11 +59,15 @@ import { GET as GET_CHECKINS } from '@/app/api/admin/checkins/route';
 import { PUT as PUT_CHECKIN_DETAIL, DELETE as DELETE_CHECKIN_DETAIL } from '@/app/api/admin/checkins/[id]/route';
 import { getServerSession } from 'next-auth';
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
 jest.mock('@/app/api/auth/[...nextauth]/route', () => ({
   authOptions: {},
 }));
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+// ==================================================
+// 测试套件
+// ==================================================
 
 describe('管理员打卡记录接口 - 权限与列表', () => {
   beforeEach(() => {
@@ -107,8 +127,7 @@ describe('PUT /api/admin/checkins/[id] 状态更新', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'approved' }),
     });
-    const params = Promise.resolve({ id: 'c1' });
-    const res = await PUT_CHECKIN_DETAIL(req as any, { params } as any);
+    const res = await PUT_CHECKIN_DETAIL(req as any, { params: { id: 'c1' } } as any);
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -122,8 +141,7 @@ describe('PUT /api/admin/checkins/[id] 状态更新', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'unknown' }),
     });
-    const params = Promise.resolve({ id: 'c1' });
-    const res = await PUT_CHECKIN_DETAIL(req as any, { params } as any);
+    const res = await PUT_CHECKIN_DETAIL(req as any, { params: { id: 'c1' } } as any);
     const json = await res.json();
     expect(res.status).toBe(400);
     expect(json.message).toBe('状态值无效');
@@ -136,8 +154,7 @@ describe('DELETE /api/admin/checkins/[id] 删除逻辑', () => {
   test('不存在返回 404', async () => {
     prisma.checkin.findUnique.mockResolvedValue(null);
     const req = new Request('http://localhost/api/admin/checkins/c1', { method: 'DELETE' });
-    const params = Promise.resolve({ id: 'c1' });
-    const res = await DELETE_CHECKIN_DETAIL(req as any, { params } as any);
+    const res = await DELETE_CHECKIN_DETAIL(req as any, { params: { id: 'c1' } } as any);
     const json = await res.json();
 
     expect(res.status).toBe(404);
@@ -150,8 +167,7 @@ describe('DELETE /api/admin/checkins/[id] 删除逻辑', () => {
     prisma.checkin.delete.mockResolvedValue({ id: 'c1' });
 
     const req = new Request('http://localhost/api/admin/checkins/c1', { method: 'DELETE' });
-    const params = Promise.resolve({ id: 'c1' });
-    const res = await DELETE_CHECKIN_DETAIL(req as any, { params } as any);
+    const res = await DELETE_CHECKIN_DETAIL(req as any, { params: { id: 'c1' } } as any);
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -165,8 +181,7 @@ describe('DELETE /api/admin/checkins/[id] 删除逻辑', () => {
     prisma.checkin.delete.mockRejectedValue(new Error('fail'));
 
     const req = new Request('http://localhost/api/admin/checkins/c1', { method: 'DELETE' });
-    const params = Promise.resolve({ id: 'c1' });
-    const res = await DELETE_CHECKIN_DETAIL(req as any, { params } as any);
+    const res = await DELETE_CHECKIN_DETAIL(req as any, { params: { id: 'c1' } } as any);
     const json = await res.json();
 
     expect(res.status).toBe(500);

@@ -1,9 +1,27 @@
-// /tests/apiadminpois.test.ts
+// /tests/apiadminpois.test.ts (修复版)
+
+/**
+ * 主要修复点：
+ * 1. 在全局禁用 console.error 的真实输出（测试过程中会触发路由的 catch 分支并打印错误，测试中这是正常的断言路径），避免测试日志被污染。
+ * 2. 保持对 next/server、next-auth 与 @prisma/client 的 mock，但在每个用例前后清理 mock。
+ * 3. 保持对 route handler 的导入在 mock 之后，确保被测代码使用的是 mock 的 prisma 与 session。
+ *
+ * 说明：如果你更希望在失败路径上断言 console.error 被调用（而不是静默），可以把全局的 mock 改为在特定的 describe/it 中 spy 并断言调用。
+ */
+
+// 0) 全局抑制 console.error（避免测试输出被大量错误日志污染）
+beforeAll(() => {
+  jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+afterAll(() => {
+  (console.error as unknown as jest.Mock).mockRestore();
+});
 
 // 1) Mock next/server 的 NextResponse
 jest.mock('next/server', () => ({
   NextResponse: {
     json: jest.fn((data: any, opts?: any) => ({
+      // 返回一个对象，测试中我们直接 await res.json() 即可拿到 data
       json: async () => data,
       status: opts?.status ?? 200,
       ok: opts?.status ? opts.status >= 200 && opts.status < 300 : true,
@@ -54,6 +72,10 @@ jest.mock('@/app/api/auth/[...nextauth]/route', () => ({
 }));
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+
+// ==================================================
+// 测试套件
+// ==================================================
 
 describe('管理员POI接口 - 权限与列表', () => {
   beforeEach(() => {
@@ -203,12 +225,12 @@ describe('POI 详情 GET/PUT', () => {
   test('GET 存在返回 200，不存在返回 404', async () => {
     prisma.pOI.findUnique.mockResolvedValueOnce({ id: 'poi_001', name: 'A' });
     const req = new Request('http://localhost/api/admin/pois/poi_001');
-    const params = Promise.resolve({ id: 'poi_001' });
-    const res1 = await GET_POI_DETAIL(req as any, { params } as any);
+    // route handlers 的第二个参数通常为 { params: { id } }
+    const res1 = await GET_POI_DETAIL(req as any, { params: { id: 'poi_001' } } as any);
     expect(res1.status).toBe(200);
 
     prisma.pOI.findUnique.mockResolvedValueOnce(null);
-    const res2 = await GET_POI_DETAIL(req as any, { params } as any);
+    const res2 = await GET_POI_DETAIL(req as any, { params: { id: 'poi_001' } } as any);
     const json2 = await res2.json();
     expect(res2.status).toBe(404);
     expect(json2.message).toBe('打卡点不存在');
@@ -221,8 +243,7 @@ describe('POI 详情 GET/PUT', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: 'B', order: 2 }),
     });
-    const params = Promise.resolve({ id: 'poi_001' });
-    const res = await PUT_POI_DETAIL(req as any, { params } as any);
+    const res = await PUT_POI_DETAIL(req as any, { params: { id: 'poi_001' } } as any);
     const json = await res.json();
     expect(res.status).toBe(200);
     expect(json.data.poi.name).toBe('B');
@@ -235,8 +256,7 @@ describe('POI 详情 GET/PUT', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ routeId: 'no-route' }),
     });
-    const params = Promise.resolve({ id: 'poi_001' });
-    const res = await PUT_POI_DETAIL(req as any, { params } as any);
+    const res = await PUT_POI_DETAIL(req as any, { params: { id: 'poi_001' } } as any);
     const json = await res.json();
     expect(res.status).toBe(400);
     expect(json.message).toBe('所属路线不存在');
@@ -248,8 +268,7 @@ describe('POI 详情 GET/PUT', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ latitude: 'bad' }),
     });
-    const params = Promise.resolve({ id: 'poi_001' });
-    const res = await PUT_POI_DETAIL(req as any, { params } as any);
+    const res = await PUT_POI_DETAIL(req as any, { params: { id: 'poi_001' } } as any);
     const json = await res.json();
     expect(res.status).toBe(400);
     expect(json.message).toBe('纬度必须为数字');
@@ -261,8 +280,7 @@ describe('POI 详情 GET/PUT', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ order: 0 }),
     });
-    const params = Promise.resolve({ id: 'poi_001' });
-    const res = await PUT_POI_DETAIL(req as any, { params } as any);
+    const res = await PUT_POI_DETAIL(req as any, { params: { id: 'poi_001' } } as any);
     const json = await res.json();
     expect(res.status).toBe(400);
     expect(json.message).toBe('顺序必须为正整数');
@@ -275,8 +293,7 @@ describe('DELETE /api/admin/pois/[id] 删除逻辑', () => {
   test('不存在返回 404', async () => {
     prisma.pOI.findUnique.mockResolvedValue(null);
     const req = new Request('http://localhost/api/admin/pois/poi_001', { method: 'DELETE' });
-    const params = Promise.resolve({ id: 'poi_001' });
-    const res = await DELETE_POI_DETAIL(req as any, { params } as any);
+    const res = await DELETE_POI_DETAIL(req as any, { params: { id: 'poi_001' } } as any);
     const json = await res.json();
     expect(res.status).toBe(404);
     expect(json.message).toBe('打卡点不存在');
@@ -289,8 +306,7 @@ describe('DELETE /api/admin/pois/[id] 删除逻辑', () => {
     prisma.pOI.delete.mockResolvedValue({ id: 'poi_001' });
 
     const req = new Request('http://localhost/api/admin/pois/poi_001', { method: 'DELETE' });
-    const params = Promise.resolve({ id: 'poi_001' });
-    const res = await DELETE_POI_DETAIL(req as any, { params } as any);
+    const res = await DELETE_POI_DETAIL(req as any, { params: { id: 'poi_001' } } as any);
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -307,8 +323,7 @@ describe('DELETE /api/admin/pois/[id] 删除逻辑', () => {
     prisma.pOI.delete.mockRejectedValue(new Error('fail'));
 
     const req = new Request('http://localhost/api/admin/pois/poi_001', { method: 'DELETE' });
-    const params = Promise.resolve({ id: 'poi_001' });
-    const res = await DELETE_POI_DETAIL(req as any, { params } as any);
+    const res = await DELETE_POI_DETAIL(req as any, { params: { id: 'poi_001' } } as any);
     const json = await res.json();
 
     expect(res.status).toBe(500);

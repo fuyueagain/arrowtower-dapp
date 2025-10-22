@@ -1,4 +1,20 @@
-// /tests/apiadminvouchers.test.ts
+// /tests/apiadminvouchers.test.ts (修复版)
+
+/**
+ * 修复要点：
+ * 1. 全局抑制 console.error（避免路由 catch 分支在负面测试中打印大量日志）。
+ * 2. 在 mock 之后再导入被测路由，确保被测代码使用的是 mock 的 prisma 与 session。
+ * 3. 把 route handler 的第二个参数统一传为 { params: { id } }，更贴合 Next.js 调用方式。
+ * 4. 每个测试前使用 jest.clearAllMocks()，防止 mock 相互影响。
+ */
+
+// 全局抑制 console.error
+beforeAll(() => {
+  jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+afterAll(() => {
+  (console.error as unknown as jest.Mock).mockRestore();
+});
 
 // 1) Mock next/server 的 NextResponse
 jest.mock('next/server', () => ({
@@ -38,12 +54,15 @@ import { GET as GET_VOUCHERS } from '@/app/api/admin/vouchers/route';
 import { PUT as PUT_VOUCHER_DETAIL, DELETE as DELETE_VOUCHER_DETAIL } from '@/app/api/admin/vouchers/[id]/route';
 import { getServerSession } from 'next-auth';
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-
 jest.mock('@/app/api/auth/[...nextauth]/route', () => ({
   authOptions: {},
 }));
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+// ==================================================
+// 测试套件
+// ==================================================
 
 describe('管理员凭证接口 - 权限与列表', () => {
   beforeEach(() => {
@@ -101,8 +120,7 @@ describe('PUT /api/admin/vouchers/[id] 更新', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'completed' }),
     });
-    const params = Promise.resolve({ id: 'v1' });
-    const res = await PUT_VOUCHER_DETAIL(req as any, { params } as any);
+    const res = await PUT_VOUCHER_DETAIL(req as any, { params: { id: 'v1' } } as any);
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -117,8 +135,7 @@ describe('PUT /api/admin/vouchers/[id] 更新', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nftTokenId: null, mintTxHash: null }),
     });
-    const params = Promise.resolve({ id: 'v1' });
-    const res = await PUT_VOUCHER_DETAIL(req as any, { params } as any);
+    const res = await PUT_VOUCHER_DETAIL(req as any, { params: { id: 'v1' } } as any);
     const json = await res.json();
     expect(res.status).toBe(200);
     expect(prisma.voucher.update).toHaveBeenCalledWith({ where: { id: 'v1' }, data: { nftTokenId: null, mintTxHash: null } });
@@ -130,8 +147,7 @@ describe('PUT /api/admin/vouchers/[id] 更新', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'weird' }),
     });
-    const params = Promise.resolve({ id: 'v1' });
-    const res = await PUT_VOUCHER_DETAIL(req as any, { params } as any);
+    const res = await PUT_VOUCHER_DETAIL(req as any, { params: { id: 'v1' } } as any);
     const json = await res.json();
     expect(res.status).toBe(400);
     expect(json.message).toBe('状态值无效');
@@ -144,8 +160,7 @@ describe('DELETE /api/admin/vouchers/[id] 删除逻辑', () => {
   test('不存在返回 404', async () => {
     prisma.voucher.findUnique.mockResolvedValue(null);
     const req = new Request('http://localhost/api/admin/vouchers/v1', { method: 'DELETE' });
-    const params = Promise.resolve({ id: 'v1' });
-    const res = await DELETE_VOUCHER_DETAIL(req as any, { params } as any);
+    const res = await DELETE_VOUCHER_DETAIL(req as any, { params: { id: 'v1' } } as any);
     const json = await res.json();
     expect(res.status).toBe(404);
     expect(json.message).toBe('凭证不存在');
@@ -155,8 +170,7 @@ describe('DELETE /api/admin/vouchers/[id] 删除逻辑', () => {
     prisma.voucher.findUnique.mockResolvedValue({ id: 'v1' });
     prisma.voucher.delete.mockResolvedValue({ id: 'v1' });
     const req = new Request('http://localhost/api/admin/vouchers/v1', { method: 'DELETE' });
-    const params = Promise.resolve({ id: 'v1' });
-    const res = await DELETE_VOUCHER_DETAIL(req as any, { params } as any);
+    const res = await DELETE_VOUCHER_DETAIL(req as any, { params: { id: 'v1' } } as any);
     const json = await res.json();
     expect(res.status).toBe(200);
     expect(prisma.voucher.delete).toHaveBeenCalledWith({ where: { id: 'v1' } });
@@ -166,8 +180,7 @@ describe('DELETE /api/admin/vouchers/[id] 删除逻辑', () => {
     prisma.voucher.findUnique.mockResolvedValue({ id: 'v1' });
     prisma.voucher.delete.mockRejectedValue(new Error('fail'));
     const req = new Request('http://localhost/api/admin/vouchers/v1', { method: 'DELETE' });
-    const params = Promise.resolve({ id: 'v1' });
-    const res = await DELETE_VOUCHER_DETAIL(req as any, { params } as any);
+    const res = await DELETE_VOUCHER_DETAIL(req as any, { params: { id: 'v1' } } as any);
     const json = await res.json();
     expect(res.status).toBe(500);
     expect(json.success).toBe(false);
