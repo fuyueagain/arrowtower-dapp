@@ -1,8 +1,11 @@
 // app/api/admin/users/[id]/route.ts
-import { getServerSession } from "next-auth";
-
 import { NextResponse } from "next/server";
-import { updateUser, deleteUser } from "@/lib/db/userService";
+import { getUserById, updateUser, deleteUser } from "@/lib/db/userService";
+
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params; // ✅ 必须 await
+  return NextResponse.json(await getUserById(resolvedParams.id));
+}
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params; // ✅ 必须 await
