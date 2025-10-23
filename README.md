@@ -1,12 +1,14 @@
 # ArrowTower
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/easyshellworld/arrowtower-dapp/blob/main/LICENSE) [![Next.js](https://img.shields.io/badge/Next.js-15+-black?logo=next.js)](https://nextjs.org/) [![Polkadot](https://img.shields.io/badge/Polkadot-Hub_Testnet-E6007A?logo=polkadot)](https://polkadot.network/) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/easyshellworld/arrowtower-dapp/pulls) [![Live Demo](https://img.shields.io/badge/demo-live-success)](https://arrowtower.netlify.app/)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/easyshellworld/arrowtower-dapp/blob/main/LICENSE)[![Next.js](https://img.shields.io/badge/Next.js-15+-black?logo=next.js)](https://nextjs.org/)[![Polkadot](https://img.shields.io/badge/Polkadot-Hub_Testnet-E6007A?logo=polkadot)](https://polkadot.network/)[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/easyshellworld/arrowtower-dapp/pulls)[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://arrowtower.netlify.app/)[![Docker Ready](https://img.shields.io/badge/docker-ready-blue?logo=docker)](https://hub.docker.com/)[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=githubactions)](https://github.com/easyshellworld/arrowtower-dapp/actions)[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript)](https://www.typescriptlang.org/)[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0+-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)[![Web3](https://img.shields.io/badge/Web3-wagmi%2Bviem-FF6B35?logo=ethereum)](https://wagmi.sh/)[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/easyshellworld/arrowtower-dapp/actions)[![Open Issues](https://img.shields.io/github/issues/easyshellworld/arrowtower-dapp)](https://github.com/easyshellworld/arrowtower-dapp/issues)
+[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/easyshellworld/arrowtower-dapp)](https://github.com/easyshellworld/arrowtower-dapp/pulls?q=is%3Apr+is%3Aclosed)[![GitHub Repo stars](https://img.shields.io/github/stars/easyshellworld/arrowtower-dapp?style=social)](https://github.com/easyshellworld/arrowtower-dapp/stargazers)[![Last Commit](https://img.shields.io/github/last-commit/easyshellworld/arrowtower-dapp)](https://github.com/easyshellworld/arrowtower-dapp/commits/main)
 
-![Snapshot](./pic/Snapshot.PNG)
+
 
 ## 📖 项目简介
 
 ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，通过**零 Gas 费**后端代铸造技术，让用户无门槛体验 Web3。首期聚焦箭塔村乡村旅游场景，游客完成特色路线打卡和互动任务后，系统自动发放独特 NFT 数字纪念品，无需用户了解Gas费或支付费用，学习钱包使用与签名。
+![Snapshot](./pic/Snapshot.PNG)
 
 平台可快速拓展至 **Web3 会展活动**、**城市文旅探索**、**教育研学**、**商业营销**、**公益活动** 等多个商业场景。通过链上身份验证和可验证数字凭证，为文旅、会展、教育、营销等行业提供创新的用户互动和数字资产解决方案。
 
@@ -14,13 +16,42 @@ ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，通过**
 
 ## ✨ 核心特性
 
-- **🎁 零 Gas 费体验**：基于 PolkaVM 的后端代铸造技术，用户无需支付任何 Gas 费用
-- **🚀 零门槛接入**：用户仅需简单钱包签名操作，系统自动发放 NFT
-- **📍 地理位置验证**：支持 GPS 定位和二维码扫描双重验证
-- **🎨 互动任务系统**：拍照上传、知识问答、文化体验等多样化任务
-- **🏆 成就与 NFT**：完成路线自动铸造独特数字纪念品
-- **🔗 链上可验证**：所有记录上链，可追溯、可验证、不可篡改
-- **⚡ PolkaVM 驱动**：基于 Polkadot Hub Testnet，享受高性能低成本优势
+- **零 Gas 费体验**：基于 PolkaVM 后端代铸造技术，用户无需支付 Gas。  
+- **即刻生效**：Fork 或克隆项目后，拉起 Docker 镜像即可进入系统，真正做到开箱即用。  
+- **多部署形式**：支持 Docker 部署、Kubernetes 部署、GitHub Actions 一键 CI/CD 上线。  
+- **队列铸造机制**：支持事务队列、批量 NFT 铸造 (queue-minting)，可应对高并发场景。  
+- **前端可部署合约**：前端界面支持 UI 配置合约地址与 ABI，无需后端改造即可切换不同 NFT 合约。  
+- **地理位置＋二维码校验打卡**：支持 GPS 定位校验 + 二维码扫描，多重验证保障打卡有效性。  
+- **互动任务系统**：拍照上传、知识问答、任务打卡、成就解锁等，提升用户参与感。  
+- **数据统计看板**：实时统计用户行为、任务进度、铸造量、打卡人数等链上 + 线下数据。  
+- **模块化可复用**：任务系统、打卡系统、NFT 模块、数据统计模块均可拆分复用。  
+- **PolkaVM 驱动**：基于 PolkaVM 在 Polkadot 生态的测试网运行，享受高性能 ＋ 低成本优势。 
+
+
+## 🔑 核心功能模块
+
+1. **用户认证模块**  
+   - 钱包连接
+   - 签名认证 + 会话管理（NextAuth）  
+2. **地理位置打卡模块**  
+   - GPS 定位校验  
+   - 二维码 QR 扫描校验  
+   - 打卡记录同步至链上  
+3. **任务系统模块**  
+   - 创建／编辑任务路线等（如拍照上传、问答、打卡）  
+   - 奖励触发器（完成任务自动触发 NFT 铸造）  
+4. **NFT 铸造模块**  
+   - 后端代铸造（用户无需 Gas），可批量队列铸造（Queue Minting）  
+   - 前端配置合约地址/ABI，支持替换 NFT 合约部署场景  
+   - 铸造结果记录链上，用户钱包自动接收 NFT  
+5. **数据统计模块**  
+   - 实时统计用户打卡、任务完成、铸造量、活跃度、参与率等指标  
+   - 链上数据 + 本地数据库数据融合展示  
+   - 图表看板，便于运营人员分析活动效果  
+6. **部署运维模块**  
+   - 提供 Dockerfile ＋ docker-compose 配置，一键启动服务  
+   - 支持 GitHub Actions／GitLab CI 一键构建 & 部署流程  
+   - 支持切换 网络（本地、测试网、主网）与 DB 配置（PostgreSQL/SQLite） 
 
 ## 🎯 应用场景
 
@@ -278,50 +309,6 @@ arrowtower-dapp/
     └─components.json          # shadcn/ui 配置
 ```
 
-## 🔑 核心功能模块
-
-### 1. 用户认证模块
-- 钱包连接（基于 wagmi）
-- 签名验证
-- 会话管理（NextAuth）
-
-### 2. 地理位置打卡模块
-- GPS 定位验证
-- 二维码扫描
-- 打卡记录上链
-
-### 3. 任务系统模块
-- 任务创建与管理
-- 进度跟踪
-- 成就系统
-
-### 4. NFT 铸造模块
-- 后端代铸造（零 Gas 费）
-- 基于 PolkaVM 的高性能铸造
-- NFT 分发与管理
-
-### 5. 数据统计模块
-- 实时数据看板
-- 用户行为分析
-- 活动效果统计
-
-## 🎨 设计理念
-
-- **用户体验优先**：简化 Web3 操作流程，让普通用户也能轻松使用
-- **零门槛接入**：无需了解区块链知识，系统自动处理所有复杂操作
-- **场景化设计**：针对不同应用场景提供定制化解决方案
-- **可扩展架构**：模块化设计，易于扩展新功能和新场景
-- **PolkaVM 优势**：充分利用 Polkadot 生态的互操作性和低成本优势
-
-## 🔧 NPM 脚本
-
-```bash
-npm run dev          # 启动开发服务器
-npm run build        # 构建生产版本
-npm run start        # 启动生产服务器
-npm run lint         # 代码检查
-npm run init:db      # 初始化数据库
-```
 
 ## 🌐 部署
 
