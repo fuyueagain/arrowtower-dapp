@@ -154,8 +154,26 @@
 * 调整`CI/CD`功能
 * 完成`ppt`草稿内容。
 
+---
+
 ### 2025-10-20
 * 修订`ppt`头像大小写问题，更改团队English名称一个大写问题
 * 完成自动delpoy的密钥设置，能够自动化部署了。
 * 增加`readme`里面contractsd的部署测试命令，修定增加`prisma`初始化命令。
 
+---
+
+### 2025-10-21
+* 新增完善`/api/admin/checkins`,`/api/admin/pois`,`/api/admin/vouchers`,`/api/admin/routers`。四组管理api接口
+* 并添加对应的`jest`单元测试文件
+
+---
+
+### 2025-10-22
+* 新增批量二维码生成器组件`QRBulkGenerator.tsx`,并在打卡点管理中新增生成二维码按钮
+* 修复前端与钱包链接bug：`Request of type personal_sign bug`
+
+
+### 2025-10-23
+* 新增前端部署NFT合约、minter合约，绑定合约关系组件`ContractDeployer.tsx`,并制作`viem.ts`测试合约部署文件
+* 修订`readme`文件部分内容，修订`PPT`部分内容

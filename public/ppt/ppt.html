@@ -191,6 +191,7 @@
             margin-top: 1rem;
             box-shadow: 0 4px 6px rgba(5, 150, 105, 0.2);
             transition: all 0.3s ease;
+            margin: 0.5rem;
         }
 
         .btn:hover {
@@ -346,6 +347,41 @@
         #slide3 .center-image {
             max-width: 700px !important;
         }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* 链接样式 */
+        .links-container {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #065f46;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .link-item:hover {
+            color: #059669;
+        }
+        
+        .link-icon {
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 
@@ -385,30 +421,37 @@
                     <p>Yuuki</p>
                 </div>
             </div>
+            <div class="links-container">
+                <a href="https://github.com/easyshellworld/arrowtower-dapp" class="link-item" target="_blank">
+                    <span class="link-icon">🔗</span>
+                    <span>GitHub 项目地址: https://github.com/easyshellworld/arrowtower-dapp</span>
+                </a>
+                <a href="https://arrowtower.netlify.app/" class="link-item" target="_blank">
+                    <span class="link-icon">🔗</span>
+                    <span>演示网站: https://arrowtower.netlify.app/</span>
+                </a>
+            </div>
         </div>
     </section>
 
-    <!-- 视频跳转页 -->
+    <!-- 项目简介 -->
     <section class="slide" id="slide3">
+        <div class="slide-content fade-in">
+            <h2>项目简介</h2>
+            <p>ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，通过<strong>零 Gas 费</strong>后端代铸造技术，让用户无门槛体验 Web3。</p>
+            <p>首期聚焦箭塔村乡村旅游场景，游客完成特色路线打卡和互动任务后，系统自动发放独特 NFT 数字纪念品，无需用户了解Gas费或支付费用，学习钱包使用与签名。</p>
+            <p>平台可快速拓展至 <strong>Web3 会展活动</strong>、<strong>城市文旅探索</strong>、<strong>教育研学</strong>、<strong>商业营销</strong>、<strong>公益活动</strong> 等多个商业场景。通过链上身份验证和可验证数字凭证，为文旅、会展、教育、营销等行业提供创新的用户互动和数字资产解决方案。</p>
+        </div>
+    </section>
+
+    <!-- 项目演示 -->
+    <section class="slide" id="slide4">
         <div class="slide-content fade-in">
             <h2>项目演示</h2>
             <div class="center-image larger-image">
                 <img src="/ppt/group.svg" alt="箭塔村地图">
             </div>
             <p>体验箭塔村特色旅游路线，完成打卡获取 NFT 纪念品</p>
-            <a href="https://arrowtower.netlify.app/" class="btn" target="_blank">访问演示网站</a>
-        </div>
-    </section>
-
-    <!-- 项目简介 -->
-    <section class="slide" id="slide4">
-        <div class="slide-content fade-in">
-            <h2>项目简介</h2>
-            <p>ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，通过<strong>零 Gas 费</strong>后端代铸造技术，让用户无门槛体验 Web3。</p>
-            <p>首期聚焦箭塔村乡村旅游场景，游客完成特色路线打卡和互动任务后，系统自动发放独特 NFT 数字纪念品，无需用户了解钱包或支付费用。</p>
-            <p>平台可快速拓展至 <strong>Web3
-                    会展活动</strong>、<strong>城市文旅探索</strong>、<strong>教育研学</strong>、<strong>商业营销</strong>、<strong>公益活动</strong>
-                等多个商业场景。</p>
         </div>
     </section>
 
@@ -417,13 +460,16 @@
         <div class="slide-content fade-in">
             <h2>核心特性</h2>
             <ul class="feature-list">
-                <li><strong>🎁 零 Gas 费体验</strong>：基于 PolkaVM 的后端代铸造技术，用户无需支付任何 Gas 费用</li>
-                <li><strong>🚀 零门槛接入</strong>：用户无需了解钱包操作，系统自动发放 NFT</li>
-                <li><strong>📍 地理位置验证</strong>：支持 GPS 定位和二维码扫描双重验证</li>
-                <li><strong>🎨 互动任务系统</strong>：拍照上传、知识问答、文化体验等多样化任务</li>
-                <li><strong>🏆 成就与 NFT</strong>：完成路线自动铸造独特数字纪念品</li>
-                <li><strong>🔗 链上可验证</strong>：所有记录上链，可追溯、可验证、不可篡改</li>
-                <li><strong>⚡ PolkaVM 驱动</strong>：基于 Polkadot Hub Testnet，享受高性能低成本优势</li>
+                <li><strong>🎁 零 Gas 费体验</strong>：基于 PolkaVM 后端代铸造技术，用户无需支付 Gas</li>
+                <li><strong>🚀 即刻生效</strong>：Fork 或克隆项目后，拉起 Docker 镜像即可进入系统，真正做到开箱即用</li>
+                <li><strong>🔧 多部署形式</strong>：支持 Docker 部署、Kubernetes 部署、GitHub Actions 一键 CI/CD 上线</li>
+                <li><strong>🔄 队列铸造机制</strong>：支持事务队列、批量 NFT 铸造 (queue-minting)，可应对高并发场景</li>
+                <li><strong>🖥️ 前端可部署合约</strong>：前端界面支持 UI 配置合约地址与 ABI，无需后端改造即可切换不同 NFT 合约</li>
+                <li><strong>📍 地理位置＋二维码校验打卡</strong>：支持 GPS 定位校验 + 二维码扫描，多重验证保障打卡有效性</li>
+                <li><strong>🎨 互动任务系统</strong>：拍照上传、知识问答、任务打卡、成就解锁等，提升用户参与感</li>
+                <li><strong>📊 数据统计看板</strong>：实时统计用户行为、任务进度、铸造量、打卡人数等链上 + 线下数据</li>
+                <li><strong>🧩 模块化可复用</strong>：任务系统、打卡系统、NFT 模块、数据统计模块均可拆分复用</li>
+                <li><strong>⚡ PolkaVM 驱动</strong>：基于 PolkaVM 在 Polkadot 生态的测试网运行，享受高性能 ＋ 低成本优势</li>
             </ul>
         </div>
     </section>
@@ -525,7 +571,7 @@
                     <!-- 数据持久层 -->
                     <rect x="250" y="290" width="300" height="50" fill="#6ee7b7" stroke="#10b981" stroke-width="1" />
                     <text x="400" y="320" text-anchor="middle" fill="#065f46" font-weight="bold">数据持久层 (Prisma +
-                        Database + blockchain)</text>
+                        Database)</text>
                     <text x="400" y="340" text-anchor="middle" fill="#374151" font-size="14">用户数据 | 打卡记录 | 任务进度</text>
                 </svg>
             </div>
@@ -539,44 +585,34 @@
             <div class="scenario-grid">
                 <div class="scenario-card">
                     <h4>🔑 用户认证模块</h4>
-                    <p>钱包连接、签名验证、会话管理</p>
+                    <p>钱包连接、签名认证 + 会话管理（NextAuth）</p>
                 </div>
                 <div class="scenario-card">
                     <h4>📍 地理位置打卡模块</h4>
-                    <p>GPS定位验证、二维码扫描、打卡记录上链</p>
+                    <p>GPS 定位校验、二维码 QR 扫描校验、打卡记录同步至链上</p>
                 </div>
                 <div class="scenario-card">
                     <h4>🎯 任务系统模块</h4>
-                    <p>任务创建与管理、进度跟踪、成就系统</p>
+                    <p>创建／编辑任务路线（如拍照上传、问答、打卡）、奖励触发器（完成任务自动触发 NFT 铸造）</p>
                 </div>
                 <div class="scenario-card">
                     <h4>🎨 NFT 铸造模块</h4>
-                    <p>后端代铸造、高性能铸造、NFT分发管理</p>
+                    <p>后端代铸造（用户无需 Gas），可批量队列铸造、前端配置合约地址/ABI、铸造结果记录链上</p>
                 </div>
                 <div class="scenario-card">
                     <h4>📊 数据统计模块</h4>
-                    <p>实时数据看板、用户行为分析、活动效果统计</p>
+                    <p>实时统计用户打卡、任务完成、铸造量、活跃度、参与率等指标、链上数据 + 本地数据库数据融合展示</p>
+                </div>
+                <div class="scenario-card">
+                    <h4>🚀 部署运维模块</h4>
+                    <p>提供 Dockerfile ＋ docker-compose 配置，一键启动服务、支持 GitHub Actions／GitLab CI 一键构建 & 部署流程</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 设计理念 -->
-    <section class="slide" id="slide9">
-        <div class="slide-content fade-in">
-            <h2>设计理念</h2>
-            <ul class="feature-list">
-                <li><strong>用户体验优先</strong>：简化 Web3 操作流程，让普通用户也能轻松使用</li>
-                <li><strong>零门槛接入</strong>：无需了解区块链知识，系统自动处理所有复杂操作</li>
-                <li><strong>场景化设计</strong>：针对不同应用场景提供定制化解决方案</li>
-                <li><strong>可扩展架构</strong>：模块化设计，易于扩展新功能和新场景</li>
-                <li><strong>PolkaVM 优势</strong>：充分利用 Polkadot 生态的互操作性和低成本优势</li>
-            </ul>
-        </div>
-    </section>
-
     <!-- 致谢页 -->
-    <section class="slide" id="slide10">
+    <section class="slide" id="slide9">
         <div class="slide-content fade-in">
             <h2 class="acknowledgement-title">感谢大家观看</h2>
             <h2 class="acknowledgement-title">鸣谢</h2>
@@ -598,7 +634,7 @@
         <div class="nav-btn" id="next-btn">→</div>
     </div>
 
-    <div class="slide-counter" id="slide-counter">1 / 10</div>
+    <div class="slide-counter" id="slide-counter">1 / 9</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
