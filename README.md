@@ -189,7 +189,19 @@ npx hardhat run scripts/deploy.ts --network passethub
 npx hardhat run scripts/deployandtest.ts --network passethub
 ```
 
-**2.4 返回项目根目录**
+**2.5 部署与测试合约反馈**
+![](./pic/d1.PNG)
+![](./pic/d2.PNG)
+![](./pic/d3.PNG)
+![](./pic/d4.PNG)
+![](./pic/d5.PNG)
+![](./pic/d6.PNG)
+![](./pic/d7.PNG)
+![](./pic/d8.PNG)
+![](./pic/d9.PNG)
+
+
+**2.5 返回项目根目录**
 
 ```bash
 cd ../..
