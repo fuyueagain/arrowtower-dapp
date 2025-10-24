@@ -80,7 +80,7 @@ async function generateVoucherMetadata(voucherId: string,nfttokenid:string) {
       name: `Completion Badge: ${route.name} #${nfttokenid}`,
       description: `NFT awarded to  (${user.walletAddress}) for completing the route ${route.name}. Verified via on-chain check-ins at multiple points of interest.`,
       image: `https://arrowtower.netlify.app/pic/img_${img_ramdom}.svg`,
-      external_url: `https://arrowtower.netlify.app/user/${user.id}/route/${route.id}`,
+      external_url: `https://arrowtower.netlify.app/api/metadata/${nfttokenid}`,
       background_color: "000000",
 
       // attributes 是字符串类型，但通常存储 JSON 字符串
