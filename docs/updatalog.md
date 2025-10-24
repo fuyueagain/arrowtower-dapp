@@ -177,3 +177,9 @@
 ### 2025-10-23
 * 新增前端部署NFT合约、minter合约，绑定合约关系组件`ContractDeployer.tsx`,并制作`viem.ts`测试合约部署文件
 * 修订`readme`文件部分内容，修订`PPT`部分内容
+
+### 2025-10-24
+* 增加`middleware.ts`重构认证中间件，支持 admin 和 user 角色权限控制
+* 修订`readme`文件部分内容，`PPT`部分内容。
+* 修复`external_url`内容定义问题。
+

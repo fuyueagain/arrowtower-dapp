@@ -1,8 +1,12 @@
 # ArrowTower
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/easyshellworld/arrowtower-dapp/blob/main/LICENSE)[![Next.js](https://img.shields.io/badge/Next.js-15+-black?logo=next.js)](https://nextjs.org/)[![Polkadot](https://img.shields.io/badge/Polkadot-Hub_Testnet-E6007A?logo=polkadot)](https://polkadot.network/)[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/easyshellworld/arrowtower-dapp/pulls)[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://arrowtower.netlify.app/)[![Docker Ready](https://img.shields.io/badge/docker-ready-blue?logo=docker)](https://hub.docker.com/)[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=githubactions)](https://github.com/easyshellworld/arrowtower-dapp/actions)[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript)](https://www.typescriptlang.org/)[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0+-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)[![Web3](https://img.shields.io/badge/Web3-wagmi%2Bviem-FF6B35?logo=ethereum)](https://wagmi.sh/)[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/easyshellworld/arrowtower-dapp/actions)[![Open Issues](https://img.shields.io/github/issues/easyshellworld/arrowtower-dapp)](https://github.com/easyshellworld/arrowtower-dapp/issues)
-[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/easyshellworld/arrowtower-dapp)](https://github.com/easyshellworld/arrowtower-dapp/pulls?q=is%3Apr+is%3Aclosed)[![GitHub Repo stars](https://img.shields.io/github/stars/easyshellworld/arrowtower-dapp?style=social)](https://github.com/easyshellworld/arrowtower-dapp/stargazers)[![Last Commit](https://img.shields.io/github/last-commit/easyshellworld/arrowtower-dapp)](https://github.com/easyshellworld/arrowtower-dapp/commits/main)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/easyshellworld/arrowtower-dapp/blob/main/LICENSE)[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/easyshellworld/arrowtower-dapp/pulls)[![GitHub Repo stars](https://img.shields.io/github/stars/easyshellworld/arrowtower-dapp?style=social)](https://github.com/easyshellworld/arrowtower-dapp/stargazers)[![Open Issues](https://img.shields.io/github/issues/easyshellworld/arrowtower-dapp)](https://github.com/easyshellworld/arrowtower-dapp/issues)[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/easyshellworld/arrowtower-dapp)](https://github.com/easyshellworld/arrowtower-dapp/pulls?q=is%3Apr+is%3Aclosed)[![Last Commit](https://img.shields.io/github/last-commit/easyshellworld/arrowtower-dapp)](https://github.com/easyshellworld/arrowtower-dapp/commits/main)
 
+[![Polkadot](https://img.shields.io/badge/Polkadot-Hub_Testnet-E6007A?logo=polkadot)](https://polkadot.network/)[![Solidity](https://img.shields.io/badge/Solidity-363636?logo=solidity&logoColor=white)](https://soliditylang.org/)[![Web3](https://img.shields.io/badge/Web3-wagmi%2Bviem-FF6B35?logo=ethereum)](https://wagmi.sh/)[![Hardhat](https://img.shields.io/badge/Hardhat-FFF100?logo=hardhat&logoColor=black)](https://hardhat.org/)
+
+[![Next.js](https://img.shields.io/badge/Next.js-15+-black?logo=next.js)](https://nextjs.org/)[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript)](https://www.typescriptlang.org/)[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0+-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
+
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://arrowtower.netlify.app/)[![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=githubactions)](https://github.com/easyshellworld/arrowtower-dapp/actions)[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/easyshellworld/arrowtower-dapp/actions)[![Docker Ready](https://img.shields.io/badge/docker-ready-blue?logo=docker)](https://hub.docker.com/)
 
 
 ## 📖 项目简介
@@ -20,7 +24,7 @@ ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，通过**
 - **🚀 即刻生效**：Fork 或克隆项目后，拉起 Docker 镜像即可进入系统，真正做到开箱即用。  
 - **🔧 多部署形式**：支持 Docker 部署、Kubernetes 部署、GitHub Actions 一键 CI/CD 上线。  
 - **🔄 队列铸造机制**：支持事务队列、批量 NFT 铸造 (queue-minting)，可应对高并发场景。  
-- **🖥️ 前端可部署合约**：前端界面支持 UI 配置合约地址与 ABI，无需后端改造即可切换不同 NFT 合约。  
+- **🖥️ 前端可部署合约**：前端管理界面直接支持部署、配置合约地址，无需后端改造即可切换不同 NFT 合约。  
 - **📍 地理位置＋二维码校验打卡**：支持 GPS 定位校验 + 二维码扫描，多重验证保障打卡有效性。  
 - **🎨 互动任务系统**：拍照上传、知识问答、任务打卡、成就解锁等，提升用户参与感。  
 - **📊 数据统计看板**：实时统计用户行为、任务进度、铸造量、打卡人数等链上 + 线下数据。  
@@ -189,7 +193,19 @@ npx hardhat run scripts/deploy.ts --network passethub
 npx hardhat run scripts/deployandtest.ts --network passethub
 ```
 
-**2.4 返回项目根目录**
+**2.5 部署与测试合约反馈**
+![](./pic/d1.PNG)
+![](./pic/d2.PNG)
+![](./pic/d3.PNG)
+![](./pic/d4.PNG)
+![](./pic/d5.PNG)
+![](./pic/d6.PNG)
+![](./pic/d7.PNG)
+![](./pic/d8.PNG)
+![](./pic/d9.PNG)
+
+
+**2.5 返回项目根目录**
 
 ```bash
 cd ../..
