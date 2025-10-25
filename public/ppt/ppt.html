@@ -139,6 +139,11 @@
         .small-image {
             max-width: 400px !important;
         }
+        
+        /* 更小的图片样式 */
+        .smaller-image {
+            max-width: 500px !important;
+        }
 
         .center-image img {
             width: 100%;
@@ -380,7 +385,98 @@
         }
         
         .link-icon {
-            font-size: 1.2rem;
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* 徽章容器样式 */
+        .badges-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0; /* 减少上下间距 */
+        }
+        
+        .badge {
+            height: 20px;
+            border-radius: 3px;
+        }
+        
+        /* 架构图样式 */
+        .architecture-diagram {
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(5, 150, 105, 0.1);
+            border: 1px solid #a7f3d0;
+        }
+        
+        .architecture-diagram pre {
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #065f46;
+            text-align: left;
+        }
+        
+        /* 架构层样式 */
+        .arch-layer {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(5, 150, 105, 0.1);
+            border: 1px solid #a7f3d0;
+            text-align: center;
+        }
+        
+        .arch-layer h4 {
+            color: #065f46;
+            margin-bottom: 0.5rem;
+        }
+        
+        .arch-layer p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            color: #374151;
+        }
+        
+        .arch-connector {
+            height: 30px;
+            width: 2px;
+            background: #10b981;
+            margin: 0 auto;
+        }
+        
+        .arch-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .arch-ui {
+            background: #ecfdf5;
+        }
+        
+        .arch-blockchain {
+            background: #d1fae5;
+        }
+        
+        .arch-business {
+            background: #a7f3d0;
+        }
+        
+        .arch-data {
+            background: #6ee7b7;
+        }
+        
+        .arch-chain {
+            background: #34d399;
         }
     </style>
 </head>
@@ -423,11 +519,15 @@
             </div>
             <div class="links-container">
                 <a href="https://github.com/easyshellworld/arrowtower-dapp" class="link-item" target="_blank">
-                    <span class="link-icon">🔗</span>
+                    <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
                     <span>GitHub 项目地址: https://github.com/easyshellworld/arrowtower-dapp</span>
                 </a>
                 <a href="https://arrowtower.netlify.app/" class="link-item" target="_blank">
-                    <span class="link-icon">🔗</span>
+                    <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6.5 12.5H2.5V6.5H6.5V12.5ZM6.5 17.5H2.5V13.5H6.5V17.5ZM13.5 12.5H9.5V6.5H13.5V12.5ZM13.5 17.5H9.5V13.5H13.5V17.5ZM20.5 12.5H16.5V6.5H20.5V12.5ZM20.5 17.5H16.5V13.5H20.5V17.5Z"/>
+                    </svg>
                     <span>演示网站: https://arrowtower.netlify.app/</span>
                 </a>
             </div>
@@ -438,9 +538,44 @@
     <section class="slide" id="slide3">
         <div class="slide-content fade-in">
             <h2>项目简介</h2>
-            <p>ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，通过<strong>零 Gas 费</strong>后端代铸造技术，让用户无门槛体验 Web3。</p>
+            
+            <!-- 徽章部分 -->
+            <div class="badges-container">
+                <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" class="badge">
+                <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" class="badge">
+                <img src="https://img.shields.io/github/stars/easyshellworld/arrowtower-dapp?style=social" alt="GitHub Repo stars" class="badge">
+                <img src="https://img.shields.io/github/issues/easyshellworld/arrowtower-dapp" alt="Open Issues" class="badge">
+                <img src="https://img.shields.io/github/issues-pr-closed/easyshellworld/arrowtower-dapp" alt="GitHub closed pull requests" class="badge">
+                <img src="https://img.shields.io/github/last-commit/easyshellworld/arrowtower-dapp" alt="Last Commit" class="badge">
+            </div>
+            
+            <div class="badges-container">
+                <img src="https://img.shields.io/badge/Polkadot-Hub_Testnet-E6007A?logo=polkadot" alt="Polkadot" class="badge">
+                <img src="https://img.shields.io/badge/Solidity-363636?logo=solidity&logoColor=white" alt="Solidity" class="badge">
+                <img src="https://img.shields.io/badge/Web3-wagmi%2Bviem-FF6B35?logo=ethereum" alt="Web3" class="badge">
+                <img src="https://img.shields.io/badge/Hardhat-FFF100?logo=hardhat&logoColor=black" alt="Hardhat" class="badge">
+            </div>
+            
+            <div class="badges-container">
+                <img src="https://img.shields.io/badge/Next.js-15+-black?logo=next.js" alt="Next.js" class="badge">
+                <img src="https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript" alt="TypeScript" class="badge">
+                <img src="https://img.shields.io/badge/Tailwind_CSS-3.0+-06B6D4?logo=tailwindcss" alt="Tailwind CSS" class="badge">
+            </div>
+            
+            <!-- 新增徽章 -->
+            <div class="badges-container">
+                <img src="https://img.shields.io/badge/demo-live-success" alt="Live Demo" class="badge">
+                <img src="https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=githubactions" alt="CI/CD" class="badge">
+                <img src="https://img.shields.io/badge/tests-passing-brightgreen" alt="Tests" class="badge">
+                <img src="https://img.shields.io/badge/docker-ready-blue?logo=docker" alt="Docker Ready" class="badge">
+            </div>
+            
+            <p>ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，支持一键式平台部署,多场景适用，通过<strong>零 Gas 费</strong>后端代铸造技术，让用户无门槛体验 Web3。</p>
             <p>首期聚焦箭塔村乡村旅游场景，游客完成特色路线打卡和互动任务后，系统自动发放独特 NFT 数字纪念品，无需用户了解Gas费或支付费用，学习钱包使用与签名。</p>
-            <p>平台可快速拓展至 <strong>Web3 会展活动</strong>、<strong>城市文旅探索</strong>、<strong>教育研学</strong>、<strong>商业营销</strong>、<strong>公益活动</strong> 等多个商业场景。通过链上身份验证和可验证数字凭证，为文旅、会展、教育、营销等行业提供创新的用户互动和数字资产解决方案。</p>
+            
+            <div class="center-image smaller-image">
+                <img src="/ppt/snapshot.png" alt="项目截图">
+            </div>
         </div>
     </section>
 
@@ -513,10 +648,10 @@
         </div>
     </section>
 
-    <!-- 技术架构 -->
+    <!-- 技术栈 -->
     <section class="slide" id="slide7">
         <div class="slide-content fade-in">
-            <h2>技术架构</h2>
+            <h2>技术栈</h2>
             <div class="tech-stack">
                 <div class="tech-category">
                     <h4>前端技术栈</h4>
@@ -525,6 +660,7 @@
                         <li>Tailwind CSS + shadcn/ui</li>
                         <li>wagmi + viem</li>
                         <li>NextAuth.js</li>
+                        <li>TypeScript 5.0+</li>
                     </ul>
                 </div>
                 <div class="tech-category">
@@ -533,6 +669,7 @@
                         <li>Next.js API Routes</li>
                         <li>Prisma ORM</li>
                         <li>后端代铸造技术</li>
+                        <li>PostgreSQL / MySQL / SQLite</li>
                     </ul>
                 </div>
                 <div class="tech-category">
@@ -541,45 +678,90 @@
                         <li>PolkaVM 虚拟机</li>
                         <li>Polkadot Hub Testnet</li>
                         <li>智能合约系统</li>
+                        <li>Hardhat 开发框架</li>
                     </ul>
                 </div>
             </div>
-            <div class="architecture">
-                <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
-                    <!-- 系统架构图 -->
-                    <rect x="50" y="50" width="700" height="300" fill="none" stroke="#10b981" stroke-width="2"
-                        rx="10" />
+            <div class="tech-stack">
+                <div class="tech-category">
+                    <h4>部署与运维</h4>
+                    <ul>
+                        <li>Docker + docker-compose</li>
+                        <li>Kubernetes</li>
+                        <li>GitHub Actions CI/CD</li>
+                        <li>Netlify 部署</li>
+                    </ul>
+                </div>
+                <div class="tech-category">
+                    <h4>智能合约</h4>
+                    <ul>
+                        <li>Solidity</li>
+                        <li>Minter 合约</li>
+                        <li>NFT 合约</li>
+                        <li>队列铸造机制</li>
+                    </ul>
+                </div>
+                <div class="tech-category">
+                    <h4>其他技术</h4>
+                    <ul>
+                        <li>地理位置验证</li>
+                        <li>二维码扫描</li>
+                        <li>任务管理系统</li>
+                        <li>数据统计看板</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    <!-- 用户界面层 -->
-                    <rect x="100" y="80" width="600" height="50" fill="#ecfdf5" stroke="#10b981" stroke-width="1" />
-                    <text x="400" y="110" text-anchor="middle" fill="#065f46" font-weight="bold">用户界面层 (Next.js)</text>
-                    <text x="400" y="130" text-anchor="middle" fill="#374151" font-size="14">React + Tailwind CSS +
-                        shadcn/ui</text>
-
-                    <!-- 区块链交互层 -->
-                    <rect x="150" y="150" width="500" height="50" fill="#d1fae5" stroke="#10b981" stroke-width="1" />
-                    <text x="400" y="180" text-anchor="middle" fill="#065f46" font-weight="bold">区块链交互层 (wagmi +
-                        viem)</text>
-                    <text x="400" y="200" text-anchor="middle" fill="#374151" font-size="14">用户钱包连接与交易签名</text>
-
-                    <!-- 业务逻辑层 -->
-                    <rect x="200" y="220" width="400" height="50" fill="#a7f3d0" stroke="#10b981" stroke-width="1" />
-                    <text x="400" y="250" text-anchor="middle" fill="#065f46" font-weight="bold">业务逻辑层 (API Routes +
-                        NextAuth)</text>
-                    <text x="400" y="270" text-anchor="middle" fill="#374151" font-size="14">地理位置验证 | 任务管理 | 数据统计</text>
-
-                    <!-- 数据持久层 -->
-                    <rect x="250" y="290" width="300" height="50" fill="#6ee7b7" stroke="#10b981" stroke-width="1" />
-                    <text x="400" y="320" text-anchor="middle" fill="#065f46" font-weight="bold">数据持久层 (Prisma +
-                        Database)</text>
-                    <text x="400" y="340" text-anchor="middle" fill="#374151" font-size="14">用户数据 | 打卡记录 | 任务进度</text>
-                </svg>
+    <!-- 技术架构 -->
+    <section class="slide" id="slide8">
+        <div class="slide-content fade-in">
+            <h2>技术架构</h2>
+            <div class="arch-container">
+                <!-- 用户界面层 -->
+                <div class="arch-layer arch-ui">
+                    <h4>用户界面层 (Next.js)</h4>
+                    <p>React + Tailwind CSS + shadcn/ui</p>
+                </div>
+                
+                <div class="arch-connector"></div>
+                
+                <!-- 区块链交互层 -->
+                <div class="arch-layer arch-blockchain">
+                    <h4>区块链交互层 (wagmi + viem)</h4>
+                    <p>用户钱包连接与交易签名</p>
+                </div>
+                
+                <div class="arch-connector"></div>
+                
+                <!-- 业务逻辑层 -->
+                <div class="arch-layer arch-business">
+                    <h4>业务逻辑层 (API Routes + NextAuth)</h4>
+                    <p>地理位置验证 | 任务管理 | 数据统计</p>
+                </div>
+                
+                <div class="arch-connector"></div>
+                
+                <!-- 数据持久层 -->
+                <div class="arch-layer arch-data">
+                    <h4>数据持久层 (Prisma + Database)</h4>
+                    <p>用户数据 | 打卡记录 | 任务进度</p>
+                </div>
+                
+                <div class="arch-connector"></div>
+                
+                <!-- 区块链层 -->
+                <div class="arch-layer arch-chain">
+                    <h4>区块链层 (PolkaVM + Testnet)</h4>
+                    <p>Polkadot Hub Testnet | Smart Contracts</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- 核心功能模块 -->
-    <section class="slide" id="slide8">
+    <section class="slide" id="slide9">
         <div class="slide-content fade-in">
             <h2>核心功能模块</h2>
             <div class="scenario-grid">
@@ -612,7 +794,7 @@
     </section>
 
     <!-- 致谢页 -->
-    <section class="slide" id="slide9">
+    <section class="slide" id="slide10">
         <div class="slide-content fade-in">
             <h2 class="acknowledgement-title">感谢大家观看</h2>
             <h2 class="acknowledgement-title">鸣谢</h2>
@@ -634,7 +816,7 @@
         <div class="nav-btn" id="next-btn">→</div>
     </div>
 
-    <div class="slide-counter" id="slide-counter">1 / 9</div>
+    <div class="slide-counter" id="slide-counter">1 / 10</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
