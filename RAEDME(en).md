@@ -434,7 +434,10 @@ This project is open source under the MIT License.
 - **Project Homepage**: https://github.com/easyshellworld/arrowtower-dapp
 - **Live Demo**: https://arrowtower.netlify.app/
 - **Issue Reporting**: https://github.com/easyshellworld/arrowtower-dapp/issues
-- **Documentation**: [doc/1.3beta.md](doc/1.3beta.md)
+- **Documentation**: 
+   * [Early Project Plan (1.3beta)](docs/1.3beta.md)
+   * [Business Feasibility Study (Entertainment Edition)](docs/Business_Feasibility_Study(Entertainment_Edition).md)
+
 
 ## 🌟 Acknowledgments
 
