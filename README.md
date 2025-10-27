@@ -16,9 +16,9 @@ ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，支持�
 
 平台可快速拓展至 **Web3 会展活动**、**城市文旅探索**、**教育研学**、**商业营销**、**公益活动** 等多个商业场景。通过链上身份验证和可验证数字凭证，为文旅、会展、教育、营销等行业提供创新的用户互动和数字资产解决方案。
 
-**🌐 演示网站**：https://arrowtower.netlify.app/
-**🎬 演示视频**：[ArrowTower_DEMO](https://www.youtube.com/watch?v=JfxSr21KQvI&list=PLSxG9RE8DA9W12WwKVEyp4oYge_6bhpsO)
-**📖 商业可行分析报告**: [Business_Feasibility_Study(Entertainment Edition)](./docs/Business_Feasibility_Study(Entertainment_Edition).md)
+* **🌐 演示网站**：https://arrowtower.netlify.app/
+* **🎬 演示视频**：[ArrowTower_DEMO](https://www.youtube.com/watch?v=JfxSr21KQvI&list=PLSxG9RE8DA9W12WwKVEyp4oYge_6bhpsO)
+* **📖 商业可行分析报告**: [Business_Feasibility_Study(Entertainment Edition)](./docs/Business_Feasibility_Study(Entertainment_Edition).md)
 
 ## ✨ 核心特性
 
