@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArrowTower - Location Check-in Platform</title>
+    <title>ArrowTower - 地理位置打卡平台</title>
     <style>
         * {
             margin: 0;
@@ -135,12 +135,12 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
-        /* Small image styles */
+        /* 小尺寸图片样式 */
         .small-image {
             max-width: 400px !important;
         }
         
-        /* Smaller image styles */
+        /* 更小的图片样式 */
         .smaller-image {
             max-width: 500px !important;
         }
@@ -282,7 +282,7 @@
         }
 
         .highlight-card:before {
-            content: "First Scenario";
+            content: "首期场景";
             position: absolute;
             top: -10px;
             right: 15px;
@@ -310,7 +310,7 @@
             animation: fadeIn 0.8s ease forwards;
         }
 
-        /* New: Partner logo styles */
+        /* 新增：合作伙伴logo样式 */
         .partners-container {
             display: flex;
             justify-content: center;
@@ -334,7 +334,7 @@
             transform: scale(1.05);
         }
 
-        /* Acknowledgement title styles */
+        /* 鸣谢标题样式 */
         .acknowledgement-title {
             font-size: 2.5rem;
             color: #065f46;
@@ -342,12 +342,13 @@
             font-weight: 700;
         }
 
-        /* Add to existing CSS */
+        /* 添加在现有的 CSS 中 */
         .larger-image {
             max-width: 700px !important;
+            /* 或者你想要的更大尺寸 */
         }
 
-        /* Or more specific style for third page */
+        /* 或者更具体的针对第三页的样式 */
         #slide3 .center-image {
             max-width: 700px !important;
         }
@@ -360,7 +361,7 @@
             margin-top: 2rem;
         }
         
-        /* Link styles */
+        /* 链接样式 */
         .links-container {
             margin-top: 2rem;
             display: flex;
@@ -388,13 +389,13 @@
             height: 24px;
         }
         
-        /* Badge container styles */
+        /* 徽章容器样式 */
         .badges-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 0.5rem;
-            margin: 0.5rem 0;
+            margin: 0.5rem 0; /* 减少上下间距 */
         }
         
         .badge {
@@ -402,7 +403,7 @@
             border-radius: 3px;
         }
         
-        /* Architecture diagram styles */
+        /* 架构图样式 */
         .architecture-diagram {
             width: 100%;
             max-width: 800px;
@@ -423,7 +424,7 @@
             text-align: left;
         }
         
-        /* Architecture layer styles */
+        /* 架构层样式 */
         .arch-layer {
             background: white;
             border-radius: 8px;
@@ -481,39 +482,43 @@
 </head>
 
 <body>
-    <!-- Cover Page -->
+    <!-- 封面页 -->
     <section class="slide" id="slide1">
         <div class="slide-content fade-in">
             <h1>ArrowTower</h1>
-            <p class="subtitle">Location Check-in Platform Based on Polkadot Ecosystem</p>
+            <p class="subtitle">基于 Polkadot 生态的地理位置打卡平台</p>
             <div class="center-image small-image">
                 <img src="/arrowtower.jpg" alt="ArrowTower">
             </div>
-            <p>Zero Gas Fees · Zero Barriers · Location Verification · NFT Souvenirs</p>
+            <p>零 Gas 费 · 零门槛 · 地理位置验证 · NFT 纪念品</p>
         </div>
     </section>
 
-    <!-- Team Introduction -->
+    <!-- 团队介绍 -->
     <section class="slide" id="slide2">
         <div class="slide-content fade-in">
-            <h2>Team Introduction</h2>
-            <h3>Random Assembly</h3>
+            <h2>团队介绍</h2>
+            <h3>陌生人草台班子 (Random Assembly)</h3>
             <div class="team-members">
                 <div class="team-member">
                     <img src="/ppt/alice.jpg" alt="Alice">
                     <p>Alice</p>
+                    <p>富贵</p>
                 </div>
                 <div class="team-member">
                     <img src="/ppt/jackzdh.jpg" alt="jackzdh">
                     <p>jackzdh</p>
+                     <p>深海</p>
                 </div>
                 <div class="team-member">
                     <img src="/ppt/jolin.jpg" alt="Jolin">
                     <p>Jolin</p>
+                    <p>王木木</p>
                 </div>
                 <div class="team-member">
                     <img src="/ppt/yuuki.jpg" alt="Yuuki">
                     <p>Yuuki</p>
+                    <p>耶耶</p>
                 </div>
             </div>
             <div class="links-container">
@@ -521,24 +526,24 @@
                     <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                     </svg>
-                    <span>GitHub Repository: https://github.com/easyshellworld/arrowtower-dapp</span>
+                    <span>GitHub 项目地址: https://github.com/easyshellworld/arrowtower-dapp</span>
                 </a>
                 <a href="https://arrowtower.netlify.app/" class="link-item" target="_blank">
                     <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M6.5 12.5H2.5V6.5H6.5V12.5ZM6.5 17.5H2.5V13.5H6.5V17.5ZM13.5 12.5H9.5V6.5H13.5V12.5ZM13.5 17.5H9.5V13.5H13.5V17.5ZM20.5 12.5H16.5V6.5H20.5V12.5ZM20.5 17.5H16.5V13.5H20.5V17.5Z"/>
                     </svg>
-                    <span>Demo Website: https://arrowtower.netlify.app/</span>
+                    <span>演示网站: https://arrowtower.netlify.app/</span>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Project Introduction -->
+    <!-- 项目简介 -->
     <section class="slide" id="slide3">
         <div class="slide-content fade-in">
-            <h2>Project Introduction</h2>
+            <h2>项目简介</h2>
             
-            <!-- Badges section -->
+            <!-- 徽章部分 -->
             <div class="badges-container">
                 <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" class="badge">
                 <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" class="badge">
@@ -561,7 +566,7 @@
                 <img src="https://img.shields.io/badge/Tailwind_CSS-3.0+-06B6D4?logo=tailwindcss" alt="Tailwind CSS" class="badge">
             </div>
             
-            <!-- Additional badges -->
+            <!-- 新增徽章 -->
             <div class="badges-container">
                 <img src="https://img.shields.io/badge/demo-live-success" alt="Live Demo" class="badge">
                 <img src="https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=githubactions" alt="CI/CD" class="badge">
@@ -569,88 +574,91 @@
                 <img src="https://img.shields.io/badge/docker-ready-blue?logo=docker" alt="Docker Ready" class="badge">
             </div>
              <div class="center-image smaller-image">
-                <img src="/ppt/snapshot.png" alt="Project Screenshot">
+                <img src="/ppt/snapshot.png" alt="项目截图">
             </div>
-            <p>ArrowTower is a location check-in platform based on the Polkadot ecosystem, supporting one-click platform deployment and multiple usage scenarios. Through <strong>zero Gas fee</strong> backend proxy minting technology, users can experience Web3 without barriers. After tourists complete featured route check-ins and interactive tasks, the system automatically issues unique NFT digital souvenirs without requiring users to understand Gas fees or make payments, learning wallet usage and signing.</p>
+            <p>ArrowTower 是一个基于 Polkadot 生态的地理位置打卡平台，支持一键式平台部署,多场景适用，通过<strong>零 Gas 费</strong>后端代铸造技术，让用户无门槛体验 Web3。游客完成特色路线打卡和互动任务后，系统自动发放独特 NFT 数字纪念品，无需用户了解Gas费或支付费用，学习钱包使用与签名。</p>
+            
+            
+           
         </div>
     </section>
 
-    <!-- Project Demo -->
+    <!-- 项目演示 -->
     <section class="slide" id="slide4">
         <div class="slide-content fade-in">
-            <h2>Project Demo</h2>
+            <h2>项目演示</h2>
             <div class="center-image larger-image">
-                <img src="/ppt/group.svg" alt="Arrow Tower Village Map">
+                <img src="/ppt/group.svg" alt="箭塔村地图">
             </div>
-            <p>Experience Arrow Tower Village's featured tourism routes, complete check-ins to earn NFT souvenirs</p>
+            <p>体验箭塔村特色旅游路线，完成打卡获取 NFT 纪念品</p>
         </div>
     </section>
 
-    <!-- Core Features -->
+    <!-- 核心特性 -->
     <section class="slide" id="slide5">
         <div class="slide-content fade-in">
-            <h2>Core Features</h2>
+            <h2>核心特性</h2>
             <ul class="feature-list">
-                <li><strong>🎁 Zero Gas Fee Experience</strong>: Based on PolkaVM backend proxy minting technology, users don't need to pay Gas</li>
-                <li><strong>🚀 Immediate Availability</strong>: After forking or cloning the project, start the Docker image to enter the system, truly out-of-the-box</li>
-                <li><strong>🔧 Multiple Deployment Options</strong>: Supports Docker deployment, Kubernetes deployment, GitHub Actions one-click CI/CD deployment</li>
-                <li><strong>🔄 Queue Minting Mechanism</strong>: Supports transaction queues, batch NFT minting (queue-minting), can handle high concurrency scenarios</li>
-                <li><strong>🖥️ Frontend Contract Deployment</strong>: Frontend management interface directly supports deploying and configuring contract addresses, no backend modifications needed to switch between different NFT contracts</li>
-                <li><strong>📍 Location + QR Code Verification Check-in</strong>: Supports GPS location verification + QR code scanning, multiple validations to ensure check-in validity</li>
-                <li><strong>🎨 Interactive Task System</strong>: Photo uploads, knowledge Q&A, task check-ins, achievement unlocks, etc., enhancing user engagement</li>
-                <li><strong>📊 Data Statistics Dashboard</strong>: Real-time statistics on user behavior, task progress, minting volume, check-in numbers, etc., both on-chain and offline data</li>
-                <li><strong>🧩 Modular and Reusable</strong>: Task system, check-in system, NFT module, data statistics module can all be separated and reused</li>
-                <li><strong>⚡ PolkaVM Powered</strong>: Runs on Polkadot ecosystem testnet based on PolkaVM, enjoying high performance + low cost advantages</li>
+                <li><strong>🎁 零 Gas 费体验</strong>：基于 PolkaVM 后端代铸造技术，用户无需支付 Gas</li>
+                <li><strong>🚀 即刻生效</strong>：Fork 或克隆项目后，拉起 Docker 镜像即可进入系统，真正做到开箱即用</li>
+                <li><strong>🔧 多部署形式</strong>：支持 Docker 部署、Kubernetes 部署、GitHub Actions 一键 CI/CD 上线</li>
+                <li><strong>🔄 队列铸造机制</strong>：支持事务队列、批量 NFT 铸造 (queue-minting)，可应对高并发场景</li>
+                <li><strong>🖥️ 前端可部署合约</strong>：前端管理界面直接支持部署、配置合约地址，无需后端改造即可切换不同 NFT 合约</li>
+                <li><strong>📍 地理位置＋二维码校验打卡</strong>：支持 GPS 定位校验 + 二维码扫描，多重验证保障打卡有效性</li>
+                <li><strong>🎨 互动任务系统</strong>：拍照上传、知识问答、任务打卡、成就解锁等，提升用户参与感</li>
+                <li><strong>📊 数据统计看板</strong>：实时统计用户行为、任务进度、铸造量、打卡人数等链上 + 线下数据</li>
+                <li><strong>🧩 模块化可复用</strong>：任务系统、打卡系统、NFT 模块、数据统计模块均可拆分复用</li>
+                <li><strong>⚡ PolkaVM 驱动</strong>：基于 PolkaVM 在 Polkadot 生态的测试网运行，享受高性能 ＋ 低成本优势</li>
             </ul>
         </div>
     </section>
 
-    <!-- Application Scenarios -->
+    <!-- 应用场景 -->
     <section class="slide" id="slide6">
         <div class="slide-content fade-in">
-            <h2>Application Scenarios</h2>
+            <h2>应用场景</h2>
             <div class="scenario-grid">
                 <div class="scenario-card highlight-card">
-                    <h4>🏞️ Arrow Tower Village Rural Tourism</h4>
-                    <p>Tourists browse Arrow Tower Village's featured tourism routes through the dApp, complete check-ins at designated locations through location verification or QR code scanning, complete interactive tasks (photo uploads, knowledge Q&A, cultural experiences) to accumulate achievements.</p>
-                    <p><strong>Value:</strong> Enhances tourist engagement and enjoyment, establishes digital tourism branding for Arrow Tower Village, achieves long-term user connections and secondary dissemination through NFTs.</p>
+                    <h4>🏞️ 箭塔村乡村旅游</h4>
+                    <p>游客通过 dApp 浏览箭塔村特色旅游路线，到达指定地点后通过地理位置校验或扫描二维码完成打卡，完成互动任务（拍照上传、知识问答、文化体验）积累成就。</p>
+                    <p><strong>价值：</strong>提升游客游览趣味性和参与度，为箭塔村建立数字化旅游品牌，通过 NFT 实现长期用户连接和二次传播。</p>
                 </div>
                 <div class="scenario-card">
-                    <h4>🎪 Web3 Conference Events</h4>
-                    <p>Conference check-ins, booth interactions, lecture hall check-ins, social network check-ins, automatically issue different levels of participation certificate NFTs based on check-in completion.</p>
-                    <p><strong>Value:</strong> On-chain identity verification ensures participant authenticity, prevents proxy check-ins, provides quantifiable effect data for organizers and exhibitors.</p>
+                    <h4>🎪 Web3 会展活动</h4>
+                    <p>会议签到打卡、展位互动、演讲厅打卡、社交网络打卡，根据打卡完成度自动发放不同等级的参会证明 NFT。</p>
+                    <p><strong>价值：</strong>链上身份验证确保参会者身份真实性，防止代签到，为主办方和展商提供可量化的效果数据。</p>
                 </div>
                 <div class="scenario-card">
-                    <h4>🏙️ Urban Cultural Tourism Exploration</h4>
-                    <p>Historical cultural routes, food exploration routes, art cultural routes, urban challenge competitions, promoting cultural tourism consumption and urban branding.</p>
-                    <p><strong>Value:</strong> Establishes urban digital cultural assets, enhances tourist engagement and urban identity.</p>
+                    <h4>🏙️ 城市文旅探索</h4>
+                    <p>历史文化线路、美食探店路线、艺术文化路线、城市挑战赛，促进文旅消费和城市品牌传播。</p>
+                    <p><strong>价值：</strong>建立城市数字文化资产，增强游客参与感和城市认同感。</p>
                 </div>
                 <div class="scenario-card">
-                    <h4>📚 Education and Research</h4>
-                    <p>Campus orienteering, research travel records, practical course check-ins, graduation memorials, enhancing learning enjoyment.</p>
-                    <p><strong>Value:</strong> Establishes on-chain education records, provides verifiable extracurricular activity proof.</p>
+                    <h4>📚 教育与研学</h4>
+                    <p>校园定向越野、研学旅行记录、实践课程打卡、毕业纪念册，增强学习趣味性。</p>
+                    <p><strong>价值：</strong>建立链上教育档案，提供可验证的课外活动证明。</p>
                 </div>
                 <div class="scenario-card">
-                    <h4>🛍️ Commercial Marketing Activities</h4>
-                    <p>Brand collaboration check-ins, new product launches, membership system upgrades, offline pop-up events.</p>
-                    <p><strong>Value:</strong> Increases user store visits and interaction rates, builds brand digital assets and Web3 community foundation.</p>
+                    <h4>🛍️ 商业营销活动</h4>
+                    <p>品牌联动打卡、新品发布会、会员体系升级、线下快闪活动。</p>
+                    <p><strong>价值：</strong>提升用户到店率和互动率，打造品牌数字资产和 Web3 社区基础。</p>
                 </div>
                 <div class="scenario-card">
-                    <h4>🤝 Community and Public Welfare Activities</h4>
-                    <p>Volunteer service records, environmental action check-ins, community activity participation, charity donation records.</p>
-                    <p><strong>Value:</strong> Establishes trustworthy public welfare record system, enhances transparency and credibility of public welfare activities.</p>
+                    <h4>🤝 社区与公益活动</h4>
+                    <p>志愿服务记录、环保行动打卡、社区活动参与、慈善捐赠记录。</p>
+                    <p><strong>价值：</strong>建立可信的公益记录体系，提升公益活动透明度和公信力。</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Technology Stack -->
+    <!-- 技术栈 -->
     <section class="slide" id="slide7">
         <div class="slide-content fade-in">
-            <h2>Technology Stack</h2>
+            <h2>技术栈</h2>
             <div class="tech-stack">
                 <div class="tech-category">
-                    <h4>Frontend Technology Stack</h4>
+                    <h4>前端技术栈</h4>
                     <ul>
                         <li>Next.js 15+ (App Router)</li>
                         <li>Tailwind CSS + shadcn/ui</li>
@@ -660,140 +668,140 @@
                     </ul>
                 </div>
                 <div class="tech-category">
-                    <h4>Backend Technology Stack</h4>
+                    <h4>后端技术栈</h4>
                     <ul>
                         <li>Next.js API Routes</li>
                         <li>Prisma ORM</li>
-                        <li>Backend Proxy Minting Technology</li>
+                        <li>后端代铸造技术</li>
                         <li>PostgreSQL / MySQL / SQLite</li>
                     </ul>
                 </div>
                 <div class="tech-category">
-                    <h4>Blockchain Technology</h4>
+                    <h4>区块链技术</h4>
                     <ul>
-                        <li>PolkaVM Virtual Machine</li>
+                        <li>PolkaVM 虚拟机</li>
                         <li>Polkadot Hub Testnet</li>
-                        <li>Smart Contract System</li>
-                        <li>Hardhat Development Framework</li>
+                        <li>智能合约系统</li>
+                        <li>Hardhat 开发框架</li>
                     </ul>
                 </div>
             </div>
             <div class="tech-stack">
                 <div class="tech-category">
-                    <h4>Deployment and Operations</h4>
+                    <h4>部署与运维</h4>
                     <ul>
                         <li>Docker + docker-compose</li>
                         <li>Kubernetes</li>
                         <li>GitHub Actions CI/CD</li>
-                        <li>Netlify Deployment</li>
+                        <li>Netlify 部署</li>
                     </ul>
                 </div>
                 <div class="tech-category">
-                    <h4>Smart Contracts</h4>
+                    <h4>智能合约</h4>
                     <ul>
                         <li>Solidity</li>
-                        <li>Minter Contract</li>
-                        <li>NFT Contract</li>
-                        <li>Queue Minting Mechanism</li>
+                        <li>Minter 合约</li>
+                        <li>NFT 合约</li>
+                        <li>队列铸造机制</li>
                     </ul>
                 </div>
                 <div class="tech-category">
-                    <h4>Other Technologies</h4>
+                    <h4>其他技术</h4>
                     <ul>
-                        <li>Location Verification</li>
-                        <li>QR Code Scanning</li>
-                        <li>Task Management System</li>
-                        <li>Data Statistics Dashboard</li>
+                        <li>地理位置验证</li>
+                        <li>二维码扫描</li>
+                        <li>任务管理系统</li>
+                        <li>数据统计看板</li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Technical Architecture -->
+    <!-- 技术架构 -->
     <section class="slide" id="slide8">
         <div class="slide-content fade-in">
-            <h2>Technical Architecture</h2>
+            <h2>技术架构</h2>
             <div class="arch-container">
-                <!-- User Interface Layer -->
+                <!-- 用户界面层 -->
                 <div class="arch-layer arch-ui">
-                    <h4>User Interface Layer (Next.js)</h4>
+                    <h4>用户界面层 (Next.js)</h4>
                     <p>React + Tailwind CSS + shadcn/ui</p>
                 </div>
                 
                 <div class="arch-connector"></div>
                 
-                <!-- Blockchain Interaction Layer -->
+                <!-- 区块链交互层 -->
                 <div class="arch-layer arch-blockchain">
-                    <h4>Blockchain Interaction Layer (wagmi + viem)</h4>
-                    <p>User Wallet Connection & Transaction Signing</p>
+                    <h4>区块链交互层 (wagmi + viem)</h4>
+                    <p>用户钱包连接与交易签名</p>
                 </div>
                 
                 <div class="arch-connector"></div>
                 
-                <!-- Business Logic Layer -->
+                <!-- 业务逻辑层 -->
                 <div class="arch-layer arch-business">
-                    <h4>Business Logic Layer (API Routes + NextAuth)</h4>
-                    <p>Location Verification | Task Management | Data Statistics</p>
+                    <h4>业务逻辑层 (API Routes + NextAuth)</h4>
+                    <p>地理位置验证 | 任务管理 | 数据统计</p>
                 </div>
                 
                 <div class="arch-connector"></div>
                 
-                <!-- Data Persistence Layer -->
+                <!-- 数据持久层 -->
                 <div class="arch-layer arch-data">
-                    <h4>Data Persistence Layer (Prisma + Database)</h4>
-                    <p>User Data | Check-in Records | Task Progress</p>
+                    <h4>数据持久层 (Prisma + Database)</h4>
+                    <p>用户数据 | 打卡记录 | 任务进度</p>
                 </div>
                 
                 <div class="arch-connector"></div>
                 
-                <!-- Blockchain Layer -->
+                <!-- 区块链层 -->
                 <div class="arch-layer arch-chain">
-                    <h4>Blockchain Layer (PolkaVM + Testnet)</h4>
+                    <h4>区块链层 (PolkaVM + Testnet)</h4>
                     <p>Polkadot Hub Testnet | Smart Contracts</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Core Function Modules -->
+    <!-- 核心功能模块 -->
     <section class="slide" id="slide9">
         <div class="slide-content fade-in">
-            <h2>Core Function Modules</h2>
+            <h2>核心功能模块</h2>
             <div class="scenario-grid">
                 <div class="scenario-card">
-                    <h4>🔑 User Authentication Module</h4>
-                    <p>Wallet connection, signature authentication + session management (NextAuth)</p>
+                    <h4>🔑 用户认证模块</h4>
+                    <p>钱包连接、签名认证 + 会话管理（NextAuth）</p>
                 </div>
                 <div class="scenario-card">
-                    <h4>📍 Location Check-in Module</h4>
-                    <p>GPS location verification, QR code scanning verification, check-in records synchronized to chain</p>
+                    <h4>📍 地理位置打卡模块</h4>
+                    <p>GPS 定位校验、二维码 QR 扫描校验、打卡记录同步至链上</p>
                 </div>
                 <div class="scenario-card">
-                    <h4>🎯 Task System Module</h4>
-                    <p>Create/edit task routes (e.g., photo uploads, Q&A, check-ins), reward triggers (automatically trigger NFT minting upon task completion)</p>
+                    <h4>🎯 任务系统模块</h4>
+                    <p>创建／编辑任务路线（如拍照上传、问答、打卡）、奖励触发器（完成任务自动触发 NFT 铸造）</p>
                 </div>
                 <div class="scenario-card">
-                    <h4>🎨 NFT Minting Module</h4>
-                    <p>Backend proxy minting (users don't need Gas), batch queue minting, frontend configuration of contract addresses/ABI, minting results recorded on-chain</p>
+                    <h4>🎨 NFT 铸造模块</h4>
+                    <p>后端代铸造（用户无需 Gas），可批量队列铸造、前端配置合约地址/ABI、铸造结果记录链上</p>
                 </div>
                 <div class="scenario-card">
-                    <h4>📊 Data Statistics Module</h4>
-                    <p>Real-time statistics on user check-ins, task completion, minting volume, activity levels, participation rates, etc., on-chain data + local database data fusion display</p>
+                    <h4>📊 数据统计模块</h4>
+                    <p>实时统计用户打卡、任务完成、铸造量、活跃度、参与率等指标、链上数据 + 本地数据库数据融合展示</p>
                 </div>
                 <div class="scenario-card">
-                    <h4>🚀 Deployment Operations Module</h4>
-                    <p>Provides Dockerfile + docker-compose configuration, one-click service startup, supports GitHub Actions/GitLab CI one-click build & deployment process</p>
+                    <h4>🚀 部署运维模块</h4>
+                    <p>提供 Dockerfile ＋ docker-compose 配置，一键启动服务、支持 GitHub Actions／GitLab CI 一键构建 & 部署流程</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Acknowledgements Page -->
+    <!-- 致谢页 -->
     <section class="slide" id="slide10">
         <div class="slide-content fade-in">
-            <h2 class="acknowledgement-title">Thank You for Watching</h2>
-            <h2 class="acknowledgement-title">Acknowledgements</h2>
+            <h2 class="acknowledgement-title">感谢大家观看</h2>
+            <h2 class="acknowledgement-title">鸣谢</h2>
             <div class="partners-container">
                 <img src="/ppt/polkadotlogo.png" alt="Polkadot" class="partner-logo">
                 <img src="/ppt/papermoon.png" alt="Papermoon" class="partner-logo">
@@ -801,12 +809,12 @@
                 <img src="/ppt/wlogo.jpg" alt="W Logo" class="partner-logo">
                 <img src="/ppt/nantang.webp" alt="W Logo" class="partner-logo">
             </div>
-            <p>Thanks to the Polkadot ecosystem for supporting Web3 infrastructure</p>
-            <p>Thanks to all developers and community members who contributed to this project!</p>
+            <p>感谢 Polkadot 生态对 Web3 基础设施的支持</p>
+            <p>感谢所有为本项目做出贡献的开发者和社区成员！</p>
         </div>
     </section>
 
-    <!-- Navigation -->
+    <!-- 导航 -->
     <div class="navigation">
         <div class="nav-btn" id="prev-btn">←</div>
         <div class="nav-btn" id="next-btn">→</div>
@@ -822,10 +830,10 @@
             const slideCounter = document.getElementById('slide-counter');
             let currentSlide = 0;
 
-            // Initialize to show first page
+            // 初始化显示第一页
             showSlide(currentSlide);
 
-            // Previous button event
+            // 上一页按钮事件
             prevBtn.addEventListener('click', function () {
                 if (currentSlide > 0) {
                     currentSlide--;
@@ -833,7 +841,7 @@
                 }
             });
 
-            // Next button event
+            // 下一页按钮事件
             nextBtn.addEventListener('click', function () {
                 if (currentSlide < slides.length - 1) {
                     currentSlide++;
@@ -841,7 +849,7 @@
                 }
             });
 
-            // Keyboard navigation
+            // 键盘导航
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'ArrowLeft') {
                     if (currentSlide > 0) {
@@ -856,25 +864,25 @@
                 }
             });
 
-            // Show specified slide
+            // 显示指定幻灯片
             function showSlide(index) {
                 slides.forEach((slide, i) => {
                     if (i === index) {
                         slide.style.display = 'flex';
-                        // Add fade-in animation
+                        // 添加淡入动画
                         const content = slide.querySelector('.slide-content');
                         content.classList.remove('fade-in');
-                        void content.offsetWidth; // Trigger reflow
+                        void content.offsetWidth; // 触发重排
                         content.classList.add('fade-in');
                     } else {
                         slide.style.display = 'none';
                     }
                 });
 
-                // Update counter
+                // 更新计数器
                 slideCounter.textContent = `${index + 1} / ${slides.length}`;
 
-                // Scroll to top
+                // 滚动到顶部
                 window.scrollTo(0, 0);
             }
         });
