@@ -477,6 +477,33 @@
         .arch-chain {
             background: #34d399;
         }
+
+        /* 新增：演示视频按钮样式 */
+        .demo-video-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(to right, #dc2626, #b91c1c);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .demo-video-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(220, 38, 38, 0.3);
+            background: linear-gradient(to right, #b91c1c, #991b1b);
+        }
+
+        .demo-video-btn svg {
+            width: 20px;
+            height: 20px;
+        }
     </style>
 </head>
 
@@ -583,6 +610,14 @@
                 <img src="/ppt/group.svg" alt="Arrow Tower Village Map">
             </div>
             <p>Experience Arrow Tower Village's featured tourism routes, complete check-ins to earn NFT souvenirs</p>
+            
+            <!-- 新增：演示视频按钮 -->
+            <a href="https://www.youtube.com/watch?v=Yy2VQyNbHfQ" class="demo-video-btn" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+                Watch Demo Video
+            </a>
         </div>
     </section>
 

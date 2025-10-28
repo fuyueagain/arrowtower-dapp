@@ -197,18 +197,7 @@ npx hardhat run scripts/deploy.ts --network passethub
 npx hardhat run scripts/deployandtest.ts --network passethub
 ```
 
-**2.4 Deployment & Testing Feedback**
-![](./pic/d1.PNG)
-![](./pic/d2.PNG)
-![](./pic/d3.PNG)
-![](./pic/d4.PNG)
-![](./pic/d5.PNG)
-![](./pic/d6.PNG)
-![](./pic/d7.PNG)
-![](./pic/d8.PNG)
-![](./pic/d9.PNG)
-
-**2.5 Return to Project Root Directory**
+**2.4 Return to Project Root Directory**
 
 ```bash
 cd ../..
