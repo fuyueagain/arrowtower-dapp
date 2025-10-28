@@ -18,7 +18,7 @@ ArrowTower is a geo-location check-in dApp built in the Polkadot ecosystem. One-
 The platform is designed for rapid extension to **Web3 conferences & events**, **urban cultural tourism**, **education & field trips**, **commercial marketing**, **community & public welfare**, and additional business scenarios. On-chain identity and verifiable credentials are leveraged to provide robust user interaction and digital asset solutions across these sectors.
 
 * **🌐 Live Demo**: https://arrowtower.netlify.app/
-* **🎬 Demo Video**: [ArrowTower_DEMO](https://www.youtube.com/watch?v=JfxSr21KQvI&list=PLSxG9RE8DA9W12WwKVEyp4oYge_6bhpsO)
+* **🎬 Demo Video**: [ArrowTower_DEMO](https://www.youtube.com/watch?v=Yy2VQyNbHfQ)
 * **📖 Business Feasibility Study (Entertainment Edition)**: [Business_Feasibility_Study(Entertainment_Edition).md](./docs/Business_Feasibility_Study(Entertainment_Edition).md)
 
 
