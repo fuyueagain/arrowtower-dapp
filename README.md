@@ -11,11 +11,11 @@
 
 ## 📖 Project Overview
 
-ArrowTower is a geo-location check-in platform built on the Polkadot ecosystem, supporting one-click platform deployment and multi-scenario applications. Through **zero gas fee** backend proxy minting technology, users can experience Web3 without barriers. The first phase focuses on the rural tourism scenario of Arrow Tower Village. After tourists complete featured route check-ins and interactive tasks, the system automatically distributes unique NFT digital souvenirs, without requiring users to understand gas fees, pay fees, or learn about wallets and signatures.
+ArrowTower is a geo-location check-in dApp built in the Polkadot ecosystem. One-click deployment and multi-scenario applicability are supported. Gasless minting is achieved via backend-sponsored transactions, enabling barrier-free Web3 onboarding. The first application scenario is Arrow Tower Village (rural tourism). After a user completes route check-ins and interactive tasks, an NFT digital souvenir is minted and delivered automatically, without requiring the user to manage gas, fees, wallets, or signatures.
 
 ![Snapshot](./public/ppt/snapshot.png)
 
-The platform can be rapidly expanded to **Web3 conference & events**, **urban cultural tourism**, **educational field trips**, **commercial marketing**, **public welfare activities**, and many other business scenarios. Through on-chain identity verification and verifiable digital credentials, it provides innovative user interaction and digital asset solutions for cultural tourism, exhibitions, education, marketing, and other industries.
+The platform is designed for rapid extension to **Web3 conferences & events**, **urban cultural tourism**, **education & field trips**, **commercial marketing**, **community & public welfare**, and additional business scenarios. On-chain identity and verifiable credentials are leveraged to provide robust user interaction and digital asset solutions across these sectors.
 
 * **🌐 Live Demo**: https://arrowtower.netlify.app/
 * **🎬 Demo Video**: [ArrowTower_DEMO](https://www.youtube.com/watch?v=JfxSr21KQvI&list=PLSxG9RE8DA9W12WwKVEyp4oYge_6bhpsO)
@@ -24,50 +24,50 @@ The platform can be rapidly expanded to **Web3 conference & events**, **urban cu
 
 ## ✨ Core Features
 
-- **🎁 Zero Gas Fee Experience**: Based on PolkaVM backend proxy minting technology, users don't need to pay gas fees.
-- **🚀 Instant Deployment**: Fork or clone the project, pull up Docker images, and enter the system - truly ready out of the box.
-- **🔧 Multiple Deployment Options**: Supports Docker deployment, Kubernetes deployment, and GitHub Actions one-click CI/CD deployment.
-- **🔄 Queue Minting Mechanism**: Supports transaction queues and batch NFT minting (queue-minting) to handle high-concurrency scenarios.
-- **🖥️ Frontend Contract Deployment**: Frontend management interface directly supports deploying and configuring contract addresses, enabling switching between different NFT contracts without backend modifications.
-- **📍 Geo-location + QR Code Check-in Verification**: Supports GPS positioning verification + QR code scanning, with multiple verification layers to ensure check-in validity.
-- **🎨 Interactive Task System**: Photo uploads, knowledge quizzes, task check-ins, achievement unlocks, etc., to enhance user engagement.
-- **📊 Data Analytics Dashboard**: Real-time statistics on user behavior, task progress, minting volume, check-in numbers, and other on-chain + offline data.
-- **🧩 Modular and Reusable**: Task system, check-in system, NFT module, and data analytics module can all be separated and reused.
-- **⚡ PolkaVM Powered**: Based on PolkaVM running on Polkadot ecosystem testnet, enjoying high performance + low cost advantages.
+- **🎁 Gasless User Experience**: Backend-sponsored minting on PolkaVM; users do not pay gas.
+- **🚀 Instant Deployment**: Fork or clone, start Docker, and access the system immediately.
+- **🔧 Multiple Deployment Options**: Docker, Kubernetes, and GitHub Actions for one-click CI/CD.
+- **🔄 Queue Minting**: Transaction queues and batch NFT minting to handle high concurrency.
+- **🖥️ Frontend-Driven Contract Ops**: Configure and switch NFT contracts via the admin UI without backend changes.
+- **📍 Geo + QR Validation**: GPS verification and QR scanning ensure check-in validity.
+- **🎨 Interactive Tasks**: Photo upload, quizzes, route check-ins, and achievement unlocks.
+- **📊 Analytics Dashboard**: Real-time metrics for user behavior, task progress, mint volume, and participation.
+- **🧩 Modular Components**: Check-ins, tasks, NFT, and analytics modules are reusable.
+- **⚡ PolkaVM Testnet**: Runs on Polkadot Hub testnet, offering high performance at low cost.
 
 
 ## 🔑 Core Functional Modules
 
-1. **User Authentication Module**
+1. **Authentication**
    - Wallet connection
-   - Signature authentication + session management (NextAuth)
-2. **Geo-location Check-in Module**
-   - GPS positioning verification
-   - QR code scanning verification
-   - Check-in records synchronized to blockchain
-3. **Task System Module**
-   - Create/edit task routes (such as photo uploads, quizzes, check-ins)
-   - Reward triggers (automatic NFT minting upon task completion)
-4. **NFT Minting Module**
-   - Backend proxy minting (users don't need gas), supports batch queue minting (Queue Minting)
-   - Frontend configuration of contract address/ABI, supports NFT contract replacement deployment scenarios
-   - Minting results recorded on-chain, users automatically receive NFTs in their wallets
-5. **Data Analytics Module**
-   - Real-time statistics on user check-ins, task completion, minting volume, activity, participation rate, and other metrics
-   - Integration of on-chain data + local database data for display
-   - Chart dashboard for operations personnel to analyze activity effectiveness
-6. **Deployment & Operations Module**
-   - Provides Dockerfile + docker-compose configuration for one-click service startup
-   - Supports GitHub Actions/GitLab CI one-click build & deployment process
-   - Supports switching networks (local, testnet, mainnet) and DB configuration (PostgreSQL/SQLite)
+   - Signature-based authentication and session management (NextAuth)
+2. **Check-ins**
+   - GPS verification
+   - QR code scanning
+   - Check-in records synchronized on-chain
+3. **Tasks**
+   - Create or edit task routes (photo upload, quizzes, check-ins)
+   - Reward triggers for automatic NFT minting upon completion
+4. **Minting**
+   - Backend-sponsored minting; supports batch queue minting
+   - Contract address/ABI configured from the frontend admin panel
+   - On-chain mint records; NFTs delivered to user wallets
+5. **Analytics**
+   - Real-time metrics for check-ins, completion, mint volume, activity, and participation
+   - Combined views of on-chain data and local database data
+   - Chart dashboards for operational analysis
+6. **Ops & Deployment**
+   - Dockerfile and docker-compose for one-click startup
+   - GitHub Actions/GitLab CI build and deployment pipelines
+   - Network switching (local, testnet, mainnet) and DB options (PostgreSQL/SQLite)
 
 ## 🎯 Application Scenarios
 
-### First Phase Scenario: Arrow Tower Village Rural Tourism
+### First Application Scenario: Arrow Tower Village (Rural Tourism)
 
 Tourists browse Arrow Tower Village's featured tourism routes through the dApp. Upon reaching designated locations, they complete check-ins through geo-location verification or QR code scanning, and complete interactive tasks (photo uploads, knowledge quizzes, cultural experiences) to accumulate achievements. After completing the full route, the system automatically mints and sends unique Arrow Tower Village NFT digital souvenirs to the user's wallet (without user operation required).
 
-**Value**: Enhances tourist tour interest and participation, establishes a digital tourism brand for Arrow Tower Village, and achieves long-term user connection and secondary dissemination through NFTs.
+**Value**: Tourist engagement is increased, a digital tourism brand is established, and long-term user connection and secondary dissemination are enabled via NFTs.
 
 ### Expansion Scenarios
 
@@ -265,6 +265,7 @@ npm run dev
 **3.5 Access Application**
 
 Open your browser and visit [http://localhost:3000](http://localhost:3000)
+
 
 ## 🐳 Docker One-Click Deployment
 
